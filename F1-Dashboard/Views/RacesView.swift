@@ -207,7 +207,6 @@ struct PremiumRaceCard: View {
                     .foregroundColor(.f1Red.opacity(0.85))
                 Text(formattedDateLine)
                     .font(AppFont.orbitron(14, weight: .medium))
-                    .monospacedDigit()
                     .foregroundColor(.white.opacity(0.85))
                 Spacer()
             }

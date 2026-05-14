@@ -98,7 +98,6 @@ struct PremiumTeamCard: View {
                         .foregroundColor(.white.opacity(0.6))
                     Text("#\(standing.position)")
                         .font(AppFont.orbitron(17, weight: .bold))
-                        .monospacedDigit()
                         .foregroundColor(.white)
                 }
                 
@@ -108,7 +107,6 @@ struct PremiumTeamCard: View {
                         .foregroundColor(.white.opacity(0.6))
                     Text(standing.points)
                         .font(AppFont.orbitron(17, weight: .bold))
-                        .monospacedDigit()
                         .foregroundColor(.f1Red)
                 }
             }

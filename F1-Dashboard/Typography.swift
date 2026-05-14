@@ -9,7 +9,8 @@ import SwiftUI
 import UIKit
 
 enum AppFont {
-    /// PostScript names match Google Fonts static filenames (e.g. `Orbitron-Bold`).
+    /// PostScript names match bundled static files (e.g. `Orbitron-Bold.ttf` → `Orbitron-Bold`).
+    /// Avoid chaining `.monospacedDigit()` on these `Text` views — SwiftUI often replaces the face with the system monospaced font for digits.
     static func orbitron(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
         .custom(postScriptName(for: weight), size: size)
     }

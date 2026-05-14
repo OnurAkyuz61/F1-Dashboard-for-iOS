@@ -77,7 +77,6 @@ struct NextRaceLiveActivityWidget: Widget {
                         Text(LiveCountdown.dhm(from: timeline.date, to: context.attributes.raceStart))
                             .font(LiveFont.heavy(26))
                             .foregroundStyle(.white)
-                            .monospacedDigit()
                     }
                     .padding(.top, 2)
                 }
@@ -116,7 +115,6 @@ struct NextRaceLiveActivityWidget: Widget {
                             Text(LiveCountdown.dhm(from: timeline.date, to: context.attributes.raceStart))
                                 .font(LiveFont.heavy(22))
                                 .foregroundStyle(.white)
-                                .monospacedDigit()
                                 .multilineTextAlignment(.trailing)
                                 .lineLimit(2)
                                 .minimumScaleFactor(0.75)
@@ -173,7 +171,6 @@ struct NextRaceLiveActivityWidget: Widget {
                     Text(LiveCountdown.dhmCompact(from: timeline.date, to: context.attributes.raceStart))
                         .font(LiveFont.bold(12))
                         .foregroundStyle(.white)
-                        .monospacedDigit()
                         .lineLimit(1)
                         .minimumScaleFactor(0.55)
                 }

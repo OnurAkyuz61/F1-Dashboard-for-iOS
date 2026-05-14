@@ -191,7 +191,6 @@ struct PremiumNextRaceCardSkeleton: View {
                         VStack(spacing: 6) {
                             Text("--")
                                 .font(AppFont.orbitron(42, weight: .heavy))
-                                .monospacedDigit()
                                 .foregroundColor(.white.opacity(0.3))
                             
                             Text("---")
@@ -278,7 +277,6 @@ struct CircuitDetailItem: View {
             }
             Text(value)
                 .font(AppFont.orbitron(15, weight: .bold))
-                .monospacedDigit()
                 .foregroundColor(.white)
         }
     }
@@ -299,17 +297,14 @@ struct PremiumCountdownView: View {
             Text(":")
                 .foregroundColor(.f1Red)
                 .font(AppFont.orbitron(32, weight: .heavy))
-                .monospacedDigit()
             PremiumTimeUnit(value: hours, label: "HRS")
             Text(":")
                 .foregroundColor(.f1Red)
                 .font(AppFont.orbitron(32, weight: .heavy))
-                .monospacedDigit()
             PremiumTimeUnit(value: minutes, label: "MIN")
             Text(":")
                 .foregroundColor(.f1Red)
                 .font(AppFont.orbitron(32, weight: .heavy))
-                .monospacedDigit()
             PremiumTimeUnit(value: seconds, label: "SEC")
         }
         .padding(.vertical, 20)
@@ -324,7 +319,6 @@ struct PremiumTimeUnit: View {
         VStack(spacing: 6) {
             Text(String(format: "%02d", value))
                 .font(AppFont.orbitron(42, weight: .heavy))
-                .monospacedDigit()
                 .foregroundColor(.f1Red)
                 .shadow(color: .f1Red.opacity(0.8), radius: 15, x: 0, y: 0)
             
@@ -475,7 +469,6 @@ struct CircuitInfoRow: View {
             
             Text(value)
                 .font(AppFont.orbitron(17, weight: .bold))
-                .monospacedDigit()
                 .foregroundColor(.white)
         }
     }

@@ -122,7 +122,6 @@ struct PremiumStandingRow: View {
             // Rank - Big, Bold, Monospaced
             Text(standing.position)
                 .font(AppFont.orbitron(32, weight: .bold))
-                .monospacedDigit()
                 .foregroundColor(rankColor)
                 .frame(width: 50, alignment: .leading)
             
@@ -151,7 +150,6 @@ struct PremiumStandingRow: View {
             // Points - Accent Red
             Text(standing.points)
                 .font(AppFont.orbitron(22, weight: .bold))
-                .monospacedDigit()
                 .foregroundColor(.f1Red)
         }
         .padding(18)
@@ -168,7 +166,6 @@ struct PremiumConstructorRow: View {
             // Rank
             Text(standing.position)
                 .font(AppFont.orbitron(32, weight: .bold))
-                .monospacedDigit()
                 .foregroundColor(.white)
                 .frame(width: 50, alignment: .leading)
             
@@ -188,7 +185,6 @@ struct PremiumConstructorRow: View {
             // Points
             Text(standing.points)
                 .font(AppFont.orbitron(22, weight: .bold))
-                .monospacedDigit()
                 .foregroundColor(.f1Red)
         }
         .padding(18)

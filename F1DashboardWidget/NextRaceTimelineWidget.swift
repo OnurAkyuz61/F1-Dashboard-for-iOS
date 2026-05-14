@@ -88,7 +88,6 @@ private struct PitWallCountdown: View {
             Text(value)
                 .font(WFont.heavy(valueSize))
                 .foregroundStyle(.white)
-                .monospacedDigit()
                 .minimumScaleFactor(0.6)
                 .lineLimit(1)
             Text(label)

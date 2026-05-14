@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct F1_DashboardApp: App {
     init() {
+        BundledFontRegistration.registerAllTTFontsInFontsFolder()
         UserDefaults.standard.register(defaults: [
             "raceRemindersEnabled": true,
             "liveActivitiesEnabled": true,
