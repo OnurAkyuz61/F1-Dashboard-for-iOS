@@ -187,7 +187,7 @@ struct PremiumNextRaceCardSkeleton: View {
                 }
                 
                 HStack(spacing: 8) {
-                    ForEach(0..<4, id: \.self) { _ in
+                    ForEach(0..<3, id: \.self) { _ in
                         VStack(spacing: 6) {
                             Text("--")
                                 .font(AppFont.orbitron(42, weight: .heavy))
@@ -285,29 +285,38 @@ struct CircuitDetailItem: View {
 // MARK: - Premium Countdown View
 struct PremiumCountdownView: View {
     let timeRemaining: TimeInterval
-    
-    var days: Int { Int(timeRemaining) / 86400 }
-    var hours: Int { (Int(timeRemaining) % 86400) / 3600 }
-    var minutes: Int { (Int(timeRemaining) % 3600) / 60 }
-    var seconds: Int { Int(timeRemaining) % 60 }
-    
+
+    private var totalSeconds: Int { max(0, Int(timeRemaining)) }
+    private var days: Int { totalSeconds / 86_400 }
+    /// Hours within the current day when `days > 0`; total hours when last day (`days == 0`).
+    private var hoursInDay: Int { (totalSeconds % 86_400) / 3_600 }
+    private var minutes: Int { (totalSeconds % 3_600) / 60 }
+    private var seconds: Int { totalSeconds % 60 }
+
+    private var colonSeparator: some View {
+        Text(":")
+            .foregroundColor(.f1Red)
+            .font(AppFont.orbitron(32, weight: .heavy))
+    }
+
     var body: some View {
         HStack(spacing: 8) {
-            PremiumTimeUnit(value: days, label: "DAYS")
-            Text(":")
-                .foregroundColor(.f1Red)
-                .font(AppFont.orbitron(32, weight: .heavy))
-            PremiumTimeUnit(value: hours, label: "HRS")
-            Text(":")
-                .foregroundColor(.f1Red)
-                .font(AppFont.orbitron(32, weight: .heavy))
-            PremiumTimeUnit(value: minutes, label: "MIN")
-            Text(":")
-                .foregroundColor(.f1Red)
-                .font(AppFont.orbitron(32, weight: .heavy))
-            PremiumTimeUnit(value: seconds, label: "SEC")
+            if days > 0 {
+                PremiumTimeUnit(value: days, label: "DAYS")
+                colonSeparator
+                PremiumTimeUnit(value: hoursInDay, label: "HRS")
+                colonSeparator
+                PremiumTimeUnit(value: minutes, label: "MIN")
+            } else {
+                PremiumTimeUnit(value: hoursInDay, label: "HRS")
+                colonSeparator
+                PremiumTimeUnit(value: minutes, label: "MIN")
+                colonSeparator
+                PremiumTimeUnit(value: seconds, label: "SEC")
+            }
         }
         .padding(.vertical, 20)
+        .animation(.easeInOut(duration: 0.25), value: days > 0)
     }
 }
 
