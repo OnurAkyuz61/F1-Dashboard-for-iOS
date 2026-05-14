@@ -407,9 +407,7 @@ struct PremiumDriverCard: View {
                     .foregroundColor(standing.positionInt == 1 ? .yellow : .white)
             }
             
-            Text(standing.driver.fullName)
-                .font(AppFont.orbitron(16, weight: .semibold))
-                .foregroundColor(.white)
+            Text(standing.driver.orbitronDisplayNameAttributed(size: 16))
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .frame(height: 40)

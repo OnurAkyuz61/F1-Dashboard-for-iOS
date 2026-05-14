@@ -116,7 +116,7 @@ struct PremiumStandingRow: View {
         default: return .white
         }
     }
-    
+
     var body: some View {
         HStack(spacing: 16) {
             // Rank - Big, Bold, Monospaced
@@ -127,12 +127,7 @@ struct PremiumStandingRow: View {
             
             // Driver Info — single flowing line (given + family wrap together, not as two columns)
             VStack(alignment: .leading, spacing: 6) {
-                (Text("\(standing.driver.givenName) ")
-                    .font(AppFont.orbitron(17, weight: .regular))
-                    .foregroundColor(.white.opacity(0.6))
-                    + Text(standing.driver.familyName)
-                    .font(AppFont.orbitron(17, weight: .bold))
-                    .foregroundColor(.white))
+                Text(standing.driver.orbitronDisplayNameAttributed())
                     .lineLimit(3)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 // MARK: - Driver Standings Models
 struct StandingsTable: Codable {
@@ -86,6 +87,24 @@ struct Driver: Codable, Identifiable {
     var initials: String {
         let components = fullName.components(separatedBy: " ")
         return components.compactMap { $0.first }.map { String($0) }.joined()
+    }
+
+    /// Given name (Orbitron, dim) + family name (Orbitron, bold) in one `Text` — avoids deprecated `Text`+`Text` (iOS 26+).
+    func orbitronDisplayNameAttributed(
+        size: CGFloat = 17,
+        givenWeight: Font.Weight = .regular,
+        familyWeight: Font.Weight = .bold,
+        givenForegroundOpacity: Double = 0.6
+    ) -> AttributedString {
+        var givenPart = AttributedString("\(givenName) ")
+        givenPart.font = AppFont.orbitron(size, weight: givenWeight)
+        givenPart.foregroundColor = Color.white.opacity(givenForegroundOpacity)
+
+        var familyPart = AttributedString(familyName)
+        familyPart.font = AppFont.orbitron(size, weight: familyWeight)
+        familyPart.foregroundColor = Color.white
+
+        return givenPart + familyPart
     }
 }
 
