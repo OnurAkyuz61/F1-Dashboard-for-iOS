@@ -73,7 +73,7 @@ struct HomeView: View {
                             PremiumCircuitInfoCard(race: race)
                         }
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 12)
                     .padding(.top, 20)
                     .padding(.bottom, 90)
                 }
@@ -149,7 +149,7 @@ struct HomeHeader: View {
                 .frame(height: 24)
             Spacer()
         }
-        .padding(.horizontal, 4)
+        .padding(.horizontal, 0)
     }
 }
 
@@ -186,7 +186,7 @@ struct PremiumNextRaceCardSkeleton: View {
                         .foregroundColor(.white.opacity(0.5))
                 }
                 
-                HStack(spacing: 8) {
+                HStack(spacing: 6) {
                     ForEach(0..<3, id: \.self) { _ in
                         VStack(spacing: 6) {
                             Text("--")
@@ -197,12 +197,13 @@ struct PremiumNextRaceCardSkeleton: View {
                                 .font(AppFont.orbitron(11, weight: .regular))
                                 .foregroundColor(.white.opacity(0.3))
                         }
-                        .frame(minWidth: 60)
+                        .frame(minWidth: 54)
                     }
                 }
                 .padding(.vertical, 20)
             }
-            .padding(28)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 22)
         }
         .glassCard()
         .shadow(color: .f1Red.opacity(0.4), radius: 25, x: 0, y: 15)
@@ -253,7 +254,8 @@ struct PremiumNextRaceCard: View {
                 }
                 .padding(.top, 8)
             }
-            .padding(28)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 22)
         }
         .glassCard()
         .shadow(color: .f1Red.opacity(0.4), radius: 25, x: 0, y: 15)
@@ -300,7 +302,7 @@ struct PremiumCountdownView: View {
     }
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 6) {
             if days > 0 {
                 PremiumTimeUnit(value: days, label: "DAYS")
                 colonSeparator
@@ -336,7 +338,7 @@ struct PremiumTimeUnit: View {
                 .foregroundColor(.white.opacity(0.6))
                 .tracking(1)
         }
-        .frame(minWidth: 60)
+        .frame(minWidth: 54)
     }
 }
 
@@ -362,7 +364,7 @@ struct PremiumStandingsPreview: View {
                     .background(Color.white.opacity(0.1))
                     .cornerRadius(8)
             }
-            .padding(.horizontal, 4)
+            .padding(.horizontal, 0)
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
@@ -370,7 +372,7 @@ struct PremiumStandingsPreview: View {
                         PremiumDriverCard(standing: standing)
                     }
                 }
-                .padding(.horizontal, 4)
+                .padding(.horizontal, 2)
             }
         }
     }
@@ -454,7 +456,8 @@ struct PremiumCircuitInfoCard: View {
                     .foregroundColor(.white.opacity(0.7))
             }
         }
-        .padding(24)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 22)
         .glassCard()
     }
 }
