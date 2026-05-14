@@ -69,7 +69,7 @@ struct AboutView: View {
                             .font(AppFont.orbitron(13, weight: .medium))
                             .foregroundColor(.white.opacity(0.5))
                         
-                        Text("Onur AKyüz")
+                        Text("Onur Akyüz")
                             .font(AppFont.orbitron(22, weight: .heavy))
                             .foregroundColor(.f1Red)
                     }
