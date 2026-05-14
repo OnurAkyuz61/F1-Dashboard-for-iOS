@@ -186,8 +186,8 @@ struct PremiumNextRaceCardSkeleton: View {
                         .foregroundColor(.white.opacity(0.5))
                 }
                 
-                HStack(spacing: 6) {
-                    ForEach(0..<3, id: \.self) { _ in
+                HStack(spacing: 5) {
+                    ForEach(0..<4, id: \.self) { _ in
                         VStack(spacing: 6) {
                             Text("--")
                                 .font(AppFont.orbitron(42, weight: .heavy))
@@ -197,7 +197,7 @@ struct PremiumNextRaceCardSkeleton: View {
                                 .font(AppFont.orbitron(11, weight: .regular))
                                 .foregroundColor(.white.opacity(0.3))
                         }
-                        .frame(minWidth: 54)
+                        .frame(minWidth: 50)
                     }
                 }
                 .padding(.vertical, 20)
@@ -312,13 +312,15 @@ struct PremiumCountdownView: View {
     }
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: days > 0 ? 5 : 6) {
             if days > 0 {
                 PremiumTimeUnit(value: days, label: "DAYS")
                 colonSeparator
                 PremiumTimeUnit(value: hoursInDay, label: "HRS")
                 colonSeparator
                 PremiumTimeUnit(value: minutes, label: "MIN")
+                colonSeparator
+                PremiumTimeUnit(value: seconds, label: "SEC")
             } else {
                 PremiumTimeUnit(value: hoursInDay, label: "HRS")
                 colonSeparator
@@ -339,16 +341,16 @@ struct PremiumTimeUnit: View {
     var body: some View {
         VStack(spacing: 6) {
             Text(String(format: "%02d", value))
-                .font(AppFont.orbitron(42, weight: .heavy))
+                .font(AppFont.orbitron(40, weight: .heavy))
                 .foregroundColor(.f1Red)
                 .shadow(color: .f1Red.opacity(0.8), radius: 15, x: 0, y: 0)
             
             Text(label)
-                .font(AppFont.orbitron(11, weight: .regular))
+                .font(AppFont.orbitron(10, weight: .regular))
                 .foregroundColor(.white.opacity(0.6))
                 .tracking(1)
         }
-        .frame(minWidth: 54)
+        .frame(minWidth: 50)
     }
 }
 
