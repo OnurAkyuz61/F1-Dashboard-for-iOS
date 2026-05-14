@@ -11,14 +11,37 @@
 		F2A000012F0AEBE100A04FB9 /* F1DashboardWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = F1DashboardWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		E2D000012F0AEBE100A04FB9 /* Exceptions for "F1-Dashboard" folder */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = DC69B56F2F0AEBE100A04FB9 /* F1-Dashboard */;
+		};
+		E2D000022F0AEBE100A04FB9 /* Exceptions for "F1DashboardWidget" folder */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = F2A000032F0AEBE100A04FB9 /* F1DashboardWidget */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		DC69B5722F0AEBE100A04FB9 /* F1-Dashboard */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E2D000012F0AEBE100A04FB9 /* Exceptions for "F1-Dashboard" folder */,
+			);
 			path = "F1-Dashboard";
 			sourceTree = "<group>";
 		};
 		F2A000022F0AEBE100A04FB9 /* F1DashboardWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E2D000022F0AEBE100A04FB9 /* Exceptions for "F1DashboardWidget" folder */,
+			);
 			path = F1DashboardWidget;
 			sourceTree = "<group>";
 		};
