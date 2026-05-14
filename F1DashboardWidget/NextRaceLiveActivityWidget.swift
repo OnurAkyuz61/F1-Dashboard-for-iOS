@@ -40,9 +40,9 @@ private let raceDayFormatter: DateFormatter = {
 }()
 
 private enum LiveFont {
-    static func regular(_ size: CGFloat) -> Font { .custom("Orbitron", size: size).weight(.regular) }
-    static func bold(_ size: CGFloat) -> Font { .custom("Orbitron", size: size).weight(.bold) }
-    static func heavy(_ size: CGFloat) -> Font { .custom("Orbitron", size: size).weight(.heavy) }
+    static func regular(_ size: CGFloat) -> Font { .custom("Orbitron-Regular", size: size) }
+    static func bold(_ size: CGFloat) -> Font { .custom("Orbitron-Bold", size: size) }
+    static func heavy(_ size: CGFloat) -> Font { .custom("Orbitron-ExtraBold", size: size) }
 }
 
 struct NextRaceLiveActivityWidget: Widget {

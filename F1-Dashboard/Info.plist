@@ -6,7 +6,12 @@
 	<string>Remind you before the next Grand Prix session starts.</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>Fonts/Orbitron-VF.ttf</string>
+		<string>Fonts/Orbitron-Regular.ttf</string>
+		<string>Fonts/Orbitron-Medium.ttf</string>
+		<string>Fonts/Orbitron-SemiBold.ttf</string>
+		<string>Fonts/Orbitron-Bold.ttf</string>
+		<string>Fonts/Orbitron-ExtraBold.ttf</string>
+		<string>Fonts/Orbitron-Black.ttf</string>
 	</array>
 </dict>
 </plist>

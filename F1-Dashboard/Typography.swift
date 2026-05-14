@@ -2,34 +2,50 @@
 //  Typography.swift
 //  F1-Dashboard
 //
-//  Orbitron variable font (OFL) — bundled as Fonts/Orbitron-VF.ttf
+//  Orbitron (OFL) — static TTFs in Fonts/
 //
 
 import SwiftUI
 import UIKit
 
 enum AppFont {
-    /// Google Fonts variable build registers as family **Orbitron**; use `.weight(...)` for axes.
-    private static let family = "Orbitron"
-
+    /// PostScript names match Google Fonts static filenames (e.g. `Orbitron-Bold`).
     static func orbitron(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .custom(family, size: size).weight(weight)
+        .custom(postScriptName(for: weight), size: size)
+    }
+
+    private static func postScriptName(for weight: Font.Weight) -> String {
+        switch weight {
+        case .black:
+            return "Orbitron-Black"
+        case .heavy:
+            return "Orbitron-ExtraBold"
+        case .bold:
+            return "Orbitron-Bold"
+        case .semibold:
+            return "Orbitron-SemiBold"
+        case .medium:
+            return "Orbitron-Medium"
+        default:
+            return "Orbitron-Regular"
+        }
     }
 }
 
 extension UIFont {
-    /// Orbitron from the bundled variable font (family name `Orbitron`).
     static func f1Orbitron(size: CGFloat, weight: UIFont.Weight = .regular) -> UIFont {
-        let traits: [UIFontDescriptor.TraitKey: Any] = [.weight: weight]
-        let attributes: [UIFontDescriptor.AttributeName: Any] = [
-            .family: "Orbitron",
-            .traits: traits,
-        ]
-        let desc = UIFontDescriptor(fontAttributes: attributes)
-        let font = UIFont(descriptor: desc, size: size)
-        let name = font.fontName.lowercased()
-        if name.contains("orbitron") { return font }
-        return .systemFont(ofSize: size, weight: weight)
+        let ps: String
+        switch weight {
+        case .heavy, .black:
+            ps = "Orbitron-ExtraBold"
+        case .bold, .semibold:
+            ps = "Orbitron-Bold"
+        case .medium:
+            ps = "Orbitron-Medium"
+        default:
+            ps = "Orbitron-Regular"
+        }
+        return UIFont(name: ps, size: size) ?? .systemFont(ofSize: size, weight: weight)
     }
 }
 
