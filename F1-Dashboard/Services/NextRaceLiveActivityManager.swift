@@ -25,7 +25,7 @@ enum NextRaceLiveActivityManager {
         let content = ActivityContent(state: state, staleDate: start)
         
         for activity in Activity<NextRaceLiveAttributes>.activities {
-            await activity.end(dismissalPolicy: .immediate)
+            await activity.end(content: nil, dismissalPolicy: .immediate)
         }
         
         do {
@@ -37,7 +37,7 @@ enum NextRaceLiveActivityManager {
     
     static func endAll() async {
         for activity in Activity<NextRaceLiveAttributes>.activities {
-            await activity.end(dismissalPolicy: .immediate)
+            await activity.end(content: nil, dismissalPolicy: .immediate)
         }
     }
 }
