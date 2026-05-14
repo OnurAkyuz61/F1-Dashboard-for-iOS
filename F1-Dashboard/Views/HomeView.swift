@@ -247,12 +247,18 @@ struct PremiumNextRaceCard: View {
                 }
                 
                 PremiumCountdownView(timeRemaining: timeRemaining)
-                
-                HStack(spacing: 24) {
+
+                HStack(spacing: 0) {
                     CircuitDetailItem(icon: "stopwatch.fill", label: "Laps", value: "58")
+                        .frame(maxWidth: .infinity)
+                    Rectangle()
+                        .fill(Color.white.opacity(0.12))
+                        .frame(width: 1)
+                        .padding(.vertical, 6)
                     CircuitDetailItem(icon: "ruler.fill", label: "Length", value: "5.278 km")
+                        .frame(maxWidth: .infinity)
                 }
-                .padding(.top, 8)
+                .padding(.top, 12)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 22)
@@ -268,19 +274,23 @@ struct CircuitDetailItem: View {
     let value: String
     
     var body: some View {
-        VStack(spacing: 6) {
-            HStack(spacing: 4) {
+        VStack(spacing: 8) {
+            HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.system(size: 11))
+                    .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(.f1Red)
                 Text(label)
-                    .font(AppFont.orbitron(11, weight: .regular))
-                    .foregroundColor(.white.opacity(0.6))
+                    .font(AppFont.orbitron(12, weight: .regular))
+                    .foregroundColor(.white.opacity(0.65))
             }
+            .frame(maxWidth: .infinity, alignment: .center)
             Text(value)
-                .font(AppFont.orbitron(15, weight: .bold))
+                .font(AppFont.orbitron(17, weight: .bold))
                 .foregroundColor(.white)
+                .multilineTextAlignment(.center)
+                .minimumScaleFactor(0.85)
         }
+        .frame(maxWidth: .infinity)
     }
 }
 
