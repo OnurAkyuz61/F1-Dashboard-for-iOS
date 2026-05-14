@@ -22,45 +22,39 @@ enum AppFont {
 
     private static func candidatePostScriptNames(for weight: Font.Weight) -> [String] {
         let primary = postScriptName(for: weight)
-        let fallbacks: [String]
-        switch weight {
-        case .black:
-            fallbacks = ["Orbitron-ExtraBold", "Orbitron-Bold", "Orbitron-SemiBold", "Orbitron-Regular"]
-        case .heavy:
-            fallbacks = ["Orbitron-Bold", "Orbitron-SemiBold", "Orbitron-Medium", "Orbitron-Regular"]
-        case .bold:
-            fallbacks = ["Orbitron-SemiBold", "Orbitron-Medium", "Orbitron-Regular"]
-        case .semibold:
-            fallbacks = ["Orbitron-Medium", "Orbitron-Bold", "Orbitron-Regular"]
-        case .medium:
-            fallbacks = ["Orbitron-SemiBold", "Orbitron-Regular"]
-        case .ultraLight, .thin, .light:
-            fallbacks = ["Orbitron-Regular"]
-        case .regular:
-            fallbacks = ["Orbitron-Medium", "Orbitron-Bold"]
-        @unknown default:
-            fallbacks = ["Orbitron-Regular"]
-        }
+        let fallbacks = fallbackPostScriptNames(for: weight)
         return [primary] + fallbacks.filter { $0 != primary }
     }
 
-    private static func postScriptName(for weight: Font.Weight) -> String {
-        switch weight {
-        case .black:
-            return "Orbitron-Black"
-        case .heavy:
-            return "Orbitron-ExtraBold"
-        case .bold:
-            return "Orbitron-Bold"
-        case .semibold:
-            return "Orbitron-SemiBold"
-        case .medium:
-            return "Orbitron-Medium"
-        case .ultraLight, .thin, .light, .regular:
-            return "Orbitron-Regular"
-        @unknown default:
-            return "Orbitron-Regular"
+    private static func fallbackPostScriptNames(for weight: Font.Weight) -> [String] {
+        if weight == .black {
+            return ["Orbitron-ExtraBold", "Orbitron-Bold", "Orbitron-SemiBold", "Orbitron-Regular"]
         }
+        if weight == .heavy {
+            return ["Orbitron-Bold", "Orbitron-SemiBold", "Orbitron-Medium", "Orbitron-Regular"]
+        }
+        if weight == .bold {
+            return ["Orbitron-SemiBold", "Orbitron-Medium", "Orbitron-Regular"]
+        }
+        if weight == .semibold {
+            return ["Orbitron-Medium", "Orbitron-Bold", "Orbitron-Regular"]
+        }
+        if weight == .medium {
+            return ["Orbitron-SemiBold", "Orbitron-Regular"]
+        }
+        if weight == .regular {
+            return ["Orbitron-Medium", "Orbitron-Bold"]
+        }
+        return ["Orbitron-Regular"]
+    }
+
+    private static func postScriptName(for weight: Font.Weight) -> String {
+        if weight == .black { return "Orbitron-Black" }
+        if weight == .heavy { return "Orbitron-ExtraBold" }
+        if weight == .bold { return "Orbitron-Bold" }
+        if weight == .semibold { return "Orbitron-SemiBold" }
+        if weight == .medium { return "Orbitron-Medium" }
+        return "Orbitron-Regular"
     }
 }
 

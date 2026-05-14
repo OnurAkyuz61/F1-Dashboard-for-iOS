@@ -456,6 +456,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "F1DashboardWidgetExtension-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "F1 Widget";
+				INFOPLIST_KEY_CFBundleShortVersionString = "1.0.0";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -486,6 +487,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "F1DashboardWidgetExtension-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "F1 Widget";
+				INFOPLIST_KEY_CFBundleShortVersionString = "1.0.0";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
