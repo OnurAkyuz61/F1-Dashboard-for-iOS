@@ -1,13 +1,21 @@
 import F1Core
 import SwiftUI
+import UIKit
 import WidgetKit
 
 // MARK: - Styling
 
 private enum WFont {
-    static func regular(_ size: CGFloat) -> Font { .custom("Orbitron-Regular", size: size) }
-    static func bold(_ size: CGFloat) -> Font { .custom("Orbitron-Bold", size: size) }
-    static func heavy(_ size: CGFloat) -> Font { .custom("Orbitron-ExtraBold", size: size) }
+    static func regular(_ size: CGFloat) -> Font { resolved("Orbitron-Regular", size: size) }
+    static func bold(_ size: CGFloat) -> Font { resolved("Orbitron-Bold", size: size) }
+    static func heavy(_ size: CGFloat) -> Font { resolved("Orbitron-ExtraBold", size: size) }
+
+    private static func resolved(_ postScriptName: String, size: CGFloat) -> Font {
+        if let ui = UIFont(name: postScriptName, size: size) {
+            return Font(uiFont: ui)
+        }
+        return .custom(postScriptName, size: size)
+    }
 }
 
 private enum WCountdown {
