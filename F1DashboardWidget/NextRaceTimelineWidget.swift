@@ -12,7 +12,7 @@ private enum WFont {
 
     private static func resolved(_ postScriptName: String, size: CGFloat) -> Font {
         if let ui = UIFont(name: postScriptName, size: size) {
-            return Font(uiFont: ui)
+            return Font(ui)
         }
         return .custom(postScriptName, size: size)
     }

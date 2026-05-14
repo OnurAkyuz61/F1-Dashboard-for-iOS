@@ -9,12 +9,12 @@ import SwiftUI
 import UIKit
 
 enum AppFont {
-    /// Uses `UIFont` first, then `Font(uiFont:)` so SwiftUI cannot ignore an unknown `.custom` name.
+    /// Uses `UIFont` first, then `Font(_:)` (UIKit bridge) so SwiftUI applies the loaded face.
     /// Avoid `.monospacedDigit()` on these texts — it often swaps digits to SF Mono.
     static func orbitron(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
         for name in candidatePostScriptNames(for: weight) {
             if let ui = UIFont(name: name, size: size) {
-                return Font(uiFont: ui)
+                return Font(ui)
             }
         }
         return .system(size: size, weight: weight)
