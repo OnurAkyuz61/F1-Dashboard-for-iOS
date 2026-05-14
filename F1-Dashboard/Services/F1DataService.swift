@@ -30,8 +30,28 @@ enum F1ServiceError: Error, LocalizedError {
 class F1DataService {
     static let shared = F1DataService()
     private let baseURL = "https://api.jolpi.ca/ergast/f1"
+    private let jsonDecoder: JSONDecoder = {
+        let d = JSONDecoder()
+        return d
+    }()
     
     private init() {}
+    
+    /// GET with `Accept: application/json` (Jolpi / Ergast mirrors).
+    private func fetchJSON(path: String) async throws -> Data {
+        let trimmed = path.hasPrefix("/") ? String(path.dropFirst()) : path
+        let urlString = "\(baseURL)/\(trimmed)"
+        guard let url = URL(string: urlString) else {
+            throw F1ServiceError.invalidURL
+        }
+        var request = URLRequest(url: url)
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+            throw F1ServiceError.invalidResponse
+        }
+        return data
+    }
     
     // MARK: - Fallback Race (Fail-Safe)
     func createFallbackRace() -> Race? {
@@ -98,39 +118,22 @@ class F1DataService {
     
     // MARK: - Fetch Next Race (Fail-Safe)
     func fetchNextRace() async -> Race? {
-        // Fetch full 2026 schedule
-        let urlString = "\(baseURL)/2026.json"
-        guard let url = URL(string: urlString) else {
-            print("DEBUG ERROR: Invalid URL - \(urlString), using fallback")
-            return createFallbackRace()
-        }
-        
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
-            
-            guard let httpResponse = response as? HTTPURLResponse,
-                  httpResponse.statusCode == 200 else {
-                print("DEBUG ERROR: Invalid HTTP response - Status code: \((response as? HTTPURLResponse)?.statusCode ?? 0), using fallback")
-                return createFallbackRace()
-            }
-            
-            let decoder = JSONDecoder()
+            let data = try await fetchJSON(path: "current.json")
             do {
-                let ergastResponse = try decoder.decode(ErgastResponse.self, from: data)
+                let ergastResponse = try jsonDecoder.decode(ErgastResponse.self, from: data)
                 
                 guard let races = ergastResponse.mrData.raceTable?.races else {
                     print("DEBUG ERROR: No races in response, using fallback")
                     return createFallbackRace()
                 }
                 
-                // Find first upcoming race using Race model's raceDate property
                 let now = Date()
                 let upcomingRaces = races.compactMap { race -> (Race, Date)? in
                     guard let raceDate = race.raceDate, raceDate > now else { return nil }
                     return (race, raceDate)
                 }
                 
-                // Sort by date and return the first one
                 let nextRace = upcomingRaces
                     .sorted { $0.1 < $1.1 }
                     .first?.0
@@ -139,7 +142,7 @@ class F1DataService {
                     print("DEBUG INFO: Found next race from API: \(race.raceName)")
                     return race
                 } else {
-                    print("DEBUG INFO: No upcoming races found in 2026 schedule, using fallback")
+                    print("DEBUG INFO: No upcoming races in current season schedule, using fallback")
                     return createFallbackRace()
                 }
             } catch let decodingError as DecodingError {
@@ -162,139 +165,100 @@ class F1DataService {
                 return createFallbackRace()
             }
         } catch {
-            print("DEBUG ERROR: Network error - \(error.localizedDescription), using fallback")
+            print("DEBUG ERROR: Request failed - \(error.localizedDescription), using fallback")
             return createFallbackRace()
         }
     }
     
-    // MARK: - Fetch Driver Standings (with Auto-Switch Season)
+    // MARK: - Fetch Driver Standings (current season + fallbacks)
     func fetchStandings() async -> (standings: [DriverStanding], season: Int) {
-        // Try 2026 first
-        if let standings2026 = await fetchStandingsForSeason(2026), !standings2026.isEmpty {
-            print("DEBUG INFO: Using 2026 driver standings")
-            return (standings2026, 2026)
+        if let parsed = await fetchDriverStandingsFromPath("current/driverStandings.json"), !parsed.standings.isEmpty {
+            print("DEBUG INFO: Using current driver standings (season \(parsed.season))")
+            return parsed
         }
         
-        // Fallback to 2025
-        print("DEBUG INFO: 2026 standings empty, falling back to 2025")
-        if let standings2025 = await fetchStandingsForSeason(2025), !standings2025.isEmpty {
-            print("DEBUG INFO: Using 2025 driver standings")
-            return (standings2025, 2025)
+        let calendarYear = Calendar.current.component(.year, from: Date())
+        for year in [calendarYear, calendarYear - 1, calendarYear - 2] {
+            if let list = await fetchStandingsForSeason(year), !list.isEmpty {
+                print("DEBUG INFO: Using \(year) driver standings fallback")
+                return (list, year)
+            }
         }
         
-        print("DEBUG ERROR: Both 2026 and 2025 standings are empty")
-        return ([], 2026)
+        print("DEBUG ERROR: Driver standings unavailable")
+        return ([], calendarYear)
+    }
+    
+    private func fetchDriverStandingsFromPath(_ path: String) async -> (standings: [DriverStanding], season: Int)? {
+        do {
+            let data = try await fetchJSON(path: path)
+            let ergastResponse = try jsonDecoder.decode(ErgastResponse.self, from: data)
+            let list = ergastResponse.mrData.standingsTable?.standingsLists.first
+            let standings = list?.driverStandings ?? []
+            let season = Int(list?.season ?? "") ?? Calendar.current.component(.year, from: Date())
+            return (standings, season)
+        } catch {
+            print("DEBUG ERROR: Driver standings path \(path) — \(error.localizedDescription)")
+            return nil
+        }
     }
     
     private func fetchStandingsForSeason(_ year: Int) async -> [DriverStanding]? {
-        let urlString = "\(baseURL)/\(year)/driverStandings.json"
-        guard let url = URL(string: urlString) else {
-            print("DEBUG ERROR: Invalid URL - \(urlString)")
-            return nil
-        }
-        
-        do {
-            let (data, response) = try await URLSession.shared.data(from: url)
-            
-            guard let httpResponse = response as? HTTPURLResponse,
-                  httpResponse.statusCode == 200 else {
-                print("DEBUG ERROR: Invalid HTTP response for \(year) - Status code: \((response as? HTTPURLResponse)?.statusCode ?? 0)")
-                return nil
-            }
-            
-            let decoder = JSONDecoder()
-            do {
-                let ergastResponse = try decoder.decode(ErgastResponse.self, from: data)
-                let standings = ergastResponse.mrData.standingsTable?.standingsLists.first?.driverStandings ?? []
-                return standings
-            } catch let decodingError as DecodingError {
-                print("DEBUG ERROR: Decoding error for \(year) - \(decodingError)")
-                return nil
-            }
-        } catch {
-            print("DEBUG ERROR: Network error for \(year) - \(error.localizedDescription)")
-            return nil
-        }
+        let result = await fetchDriverStandingsFromPath("\(year)/driverStandings.json")
+        return result?.standings
     }
     
-    // MARK: - Fetch Constructor Standings (with Auto-Switch Season)
+    // MARK: - Fetch Constructor Standings (current season + fallbacks)
     func fetchConstructorStandings() async -> (standings: [ConstructorStanding], season: Int) {
-        // Try 2026 first
-        if let standings2026 = await fetchConstructorStandingsForSeason(2026), !standings2026.isEmpty {
-            print("DEBUG INFO: Using 2026 constructor standings")
-            return (standings2026, 2026)
+        if let parsed = await fetchConstructorStandingsFromPath("current/constructorStandings.json"), !parsed.standings.isEmpty {
+            print("DEBUG INFO: Using current constructor standings (season \(parsed.season))")
+            return parsed
         }
         
-        // Fallback to 2025
-        print("DEBUG INFO: 2026 constructor standings empty, falling back to 2025")
-        if let standings2025 = await fetchConstructorStandingsForSeason(2025), !standings2025.isEmpty {
-            print("DEBUG INFO: Using 2025 constructor standings")
-            return (standings2025, 2025)
+        let calendarYear = Calendar.current.component(.year, from: Date())
+        for year in [calendarYear, calendarYear - 1, calendarYear - 2] {
+            if let list = await fetchConstructorStandingsForSeason(year), !list.isEmpty {
+                print("DEBUG INFO: Using \(year) constructor standings fallback")
+                return (list, year)
+            }
         }
         
-        print("DEBUG ERROR: Both 2026 and 2025 constructor standings are empty")
-        return ([], 2026)
+        print("DEBUG ERROR: Constructor standings unavailable")
+        return ([], calendarYear)
+    }
+    
+    private func fetchConstructorStandingsFromPath(_ path: String) async -> (standings: [ConstructorStanding], season: Int)? {
+        do {
+            let data = try await fetchJSON(path: path)
+            let ergastResponse = try jsonDecoder.decode(ErgastResponse.self, from: data)
+            let list = ergastResponse.mrData.standingsTable?.standingsLists.first
+            let standings = list?.constructorStandings ?? []
+            let season = Int(list?.season ?? "") ?? Calendar.current.component(.year, from: Date())
+            return (standings, season)
+        } catch {
+            print("DEBUG ERROR: Constructor standings path \(path) — \(error.localizedDescription)")
+            return nil
+        }
     }
     
     private func fetchConstructorStandingsForSeason(_ year: Int) async -> [ConstructorStanding]? {
-        let urlString = "\(baseURL)/\(year)/constructorStandings.json"
-        guard let url = URL(string: urlString) else {
-            print("DEBUG ERROR: Invalid URL - \(urlString)")
-            return nil
-        }
-        
-        do {
-            let (data, response) = try await URLSession.shared.data(from: url)
-            
-            guard let httpResponse = response as? HTTPURLResponse,
-                  httpResponse.statusCode == 200 else {
-                print("DEBUG ERROR: Invalid HTTP response for \(year) - Status code: \((response as? HTTPURLResponse)?.statusCode ?? 0)")
-                return nil
-            }
-            
-            let decoder = JSONDecoder()
-            do {
-                let ergastResponse = try decoder.decode(ErgastResponse.self, from: data)
-                let standings = ergastResponse.mrData.standingsTable?.standingsLists.first?.constructorStandings ?? []
-                return standings
-            } catch let decodingError as DecodingError {
-                print("DEBUG ERROR: Decoding error for \(year) - \(decodingError)")
-                return nil
-            }
-        } catch {
-            print("DEBUG ERROR: Network error for \(year) - \(error.localizedDescription)")
-            return nil
-        }
+        let result = await fetchConstructorStandingsFromPath("\(year)/constructorStandings.json")
+        return result?.standings
     }
     
-    // MARK: - Fetch Schedule
+    // MARK: - Fetch Schedule (live season)
     func fetchSchedule() async -> [Race] {
-        let urlString = "\(baseURL)/2026.json"
-        guard let url = URL(string: urlString) else {
-            print("DEBUG ERROR: Invalid URL - \(urlString)")
-            return []
-        }
-        
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
-            
-            guard let httpResponse = response as? HTTPURLResponse,
-                  httpResponse.statusCode == 200 else {
-                print("DEBUG ERROR: Invalid HTTP response - Status code: \((response as? HTTPURLResponse)?.statusCode ?? 0)")
-                return []
-            }
-            
-            let decoder = JSONDecoder()
+            let data = try await fetchJSON(path: "current.json")
             do {
-                let ergastResponse = try decoder.decode(ErgastResponse.self, from: data)
-                let races = ergastResponse.mrData.raceTable?.races ?? []
-                return races
-            } catch let decodingError as DecodingError {
-                print("DEBUG ERROR: Decoding error - \(decodingError)")
+                let ergastResponse = try jsonDecoder.decode(ErgastResponse.self, from: data)
+                return ergastResponse.mrData.raceTable?.races ?? []
+            } catch {
+                print("DEBUG ERROR: Schedule decode error — \(error)")
                 return []
             }
         } catch {
-            print("DEBUG ERROR: Network error - \(error.localizedDescription)")
+            print("DEBUG ERROR: Schedule request failed — \(error.localizedDescription)")
             return []
         }
     }

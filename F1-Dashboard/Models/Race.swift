@@ -76,26 +76,25 @@ struct Race: Codable, Identifiable {
             return nil
         }
         
-        // If time is provided, add it to the date
-        if let timeString = time {
-            let timeFormatter = DateFormatter()
-            timeFormatter.dateFormat = "HH:mm:ss"
-            timeFormatter.timeZone = TimeZone(secondsFromGMT: 0)
-            
-            // Remove 'Z' if present
-            let cleanTime = timeString.replacingOccurrences(of: "Z", with: "")
-            
-            if let time = timeFormatter.date(from: cleanTime) {
-                let calendar = Calendar.current
-                let timeComponents = calendar.dateComponents([.hour, .minute, .second], from: time)
-                return calendar.date(bySettingHour: timeComponents.hour ?? 0,
-                                   minute: timeComponents.minute ?? 0,
-                                   second: timeComponents.second ?? 0,
-                                   of: baseDate)
-            }
+        // Ergast often omits `time` until confirmed; mirror web dashboard default (14:00 UTC).
+        let rawTime = time?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let timeString = (rawTime?.isEmpty == false) ? rawTime! : "14:00:00Z"
+        
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "HH:mm:ss"
+        timeFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        
+        let cleanTime = timeString.replacingOccurrences(of: "Z", with: "")
+        
+        if let parsedTime = timeFormatter.date(from: cleanTime) {
+            let calendar = Calendar.current
+            let timeComponents = calendar.dateComponents([.hour, .minute, .second], from: parsedTime)
+            return calendar.date(bySettingHour: timeComponents.hour ?? 14,
+                               minute: timeComponents.minute ?? 0,
+                               second: timeComponents.second ?? 0,
+                               of: baseDate)
         }
         
-        // Return date at midnight UTC if no time provided
         return baseDate
     }
     
