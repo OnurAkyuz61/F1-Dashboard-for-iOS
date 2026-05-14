@@ -5,9 +5,10 @@ import WidgetKit
 // MARK: - Styling
 
 private enum WFont {
-    static func regular(_ size: CGFloat) -> Font { .custom("Orbitron-Regular", size: size) }
-    static func bold(_ size: CGFloat) -> Font { .custom("Orbitron-Bold", size: size) }
-    static func heavy(_ size: CGFloat) -> Font { .custom("Orbitron-ExtraBold", size: size) }
+    /// Variable Orbitron (`Orbitron-VF.ttf`); weight selects axis.
+    static func regular(_ size: CGFloat) -> Font { .custom("Orbitron", size: size).weight(.regular) }
+    static func bold(_ size: CGFloat) -> Font { .custom("Orbitron", size: size).weight(.bold) }
+    static func heavy(_ size: CGFloat) -> Font { .custom("Orbitron", size: size).weight(.heavy) }
 }
 
 private enum WCountdown {
@@ -16,7 +17,7 @@ private enum WCountdown {
         let d = Int(seconds) / 86_400
         let h = (Int(seconds) % 86_400) / 3_600
         let m = (Int(seconds) % 3_600) / 60
-        return (d, h, m)
+        return (d: d, h: h, m: m)
     }
 
     /// e.g. `10d 7h 1m`, `7h 1m`, `45m`
@@ -32,67 +33,69 @@ private enum WF1 {
     static let red = Color(red: 1, green: 0.09, blue: 0.02)
 }
 
-/// Pit-wall style D / H / M (no heavy “recessed” tray).
+/// Pit-wall style D / H / M (no recessed tray).
 private struct PitWallCountdown: View {
+    enum LabelMode {
+        case short
+        case long
+    }
+
     let d: Int
     let h: Int
     let m: Int
-    let isSmall: Bool
-    let isLarge: Bool
+    let valueSize: CGFloat
+    let labelSize: CGFloat
+    let labelMode: LabelMode
+    let showTopHairline: Bool
 
-    private var valueFont: CGFloat {
-        if isLarge { return 36 }
-        if isSmall { return 22 }
-        return 30
-    }
-
-    private var labelFont: CGFloat {
-        if isSmall { return 8 }
-        return 9
-    }
+    private var dayLabel: String { labelMode == .short ? "D" : "DAYS" }
+    private var hourLabel: String { labelMode == .short ? "H" : "HRS" }
+    private var minLabel: String { labelMode == .short ? "M" : "MIN" }
 
     var body: some View {
         VStack(spacing: 0) {
-            Rectangle()
-                .fill(
-                    LinearGradient(
-                        colors: [WF1.red.opacity(0.9), WF1.red.opacity(0.25), Color.clear],
-                        startPoint: .leading,
-                        endPoint: .trailing
+            if showTopHairline {
+                Rectangle()
+                    .fill(
+                        LinearGradient(
+                            colors: [WF1.red.opacity(0.9), WF1.red.opacity(0.25), Color.clear],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
                     )
-                )
-                .frame(height: 1.5)
-                .padding(.bottom, isSmall ? 8 : 10)
+                    .frame(height: 1.5)
+                    .padding(.bottom, 8)
+            }
 
             HStack(spacing: 0) {
-                cell(value: "\(d)", label: "DAYS")
+                cell(value: "\(d)", label: dayLabel)
                 divider
-                cell(value: String(format: "%02d", h), label: "HRS")
+                cell(value: String(format: "%02d", h), label: hourLabel)
                 divider
-                cell(value: String(format: "%02d", m), label: "MIN")
+                cell(value: String(format: "%02d", m), label: minLabel)
             }
         }
     }
 
     private var divider: some View {
         Rectangle()
-            .fill(Color.white.opacity(0.18))
+            .fill(Color.white.opacity(0.2))
             .frame(width: 1)
-            .padding(.vertical, isSmall ? 4 : 6)
+            .padding(.vertical, 4)
     }
 
     private func cell(value: String, label: String) -> some View {
-        VStack(spacing: isSmall ? 3 : 5) {
+        VStack(spacing: labelSize <= 7 ? 2 : 4) {
             Text(value)
-                .font(WFont.heavy(valueFont))
+                .font(WFont.heavy(valueSize))
                 .foregroundStyle(.white)
                 .monospacedDigit()
-                .minimumScaleFactor(0.65)
+                .minimumScaleFactor(0.6)
                 .lineLimit(1)
             Text(label)
-                .font(WFont.bold(labelFont))
-                .tracking(isSmall ? 1.6 : 2)
-                .foregroundStyle(.white.opacity(0.9))
+                .font(WFont.bold(labelSize))
+                .tracking(labelMode == .short ? 1 : 2)
+                .foregroundStyle(.white.opacity(0.92))
         }
         .frame(maxWidth: .infinity)
     }
@@ -261,17 +264,188 @@ struct NextRaceWidgetEntryView: View {
     
     @ViewBuilder
     private func systemCard(payload: NextRaceWidgetPayload, now: Date, family: WidgetFamily) -> some View {
-        let isSmall = family == .systemSmall
-        let isLarge = family == .systemLarge
         let parts = WCountdown.components(from: now, to: payload.raceStart)
+        switch family {
+        case .systemSmall:
+            systemCardSmall(payload: payload, parts: parts)
+        case .systemLarge:
+            systemCardLarge(payload: payload, parts: parts)
+        default:
+            systemCardMedium(payload: payload, parts: parts)
+        }
+    }
 
+    @ViewBuilder
+    private func systemCardSmall(payload: NextRaceWidgetPayload, parts: (d: Int, h: Int, m: Int)) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .center) {
+                Image(systemName: "flag.checkered.2.crossed")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(WF1.red)
+                Spacer(minLength: 8)
+                Text("R\(payload.round)")
+                    .font(WFont.bold(9))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 3)
+                    .background(
+                        Capsule(style: .continuous)
+                            .fill(Color.white.opacity(0.07))
+                            .overlay(
+                                Capsule(style: .continuous)
+                                    .stroke(WF1.red.opacity(0.55), lineWidth: 1)
+                            )
+                    )
+            }
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            WF1.red.opacity(0.9),
+                            WF1.red.opacity(0.15),
+                            Color.clear,
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .frame(height: 2)
+                .padding(.top, 6)
+                .padding(.bottom, 7)
+
+            Text(payload.raceName)
+                .font(WFont.heavy(11.5))
+                .foregroundStyle(.white)
+                .lineLimit(4)
+                .fixedSize(horizontal: false, vertical: true)
+                .minimumScaleFactor(0.78)
+
+            Text(payload.circuitName)
+                .font(WFont.regular(9))
+                .foregroundStyle(.white.opacity(0.94))
+                .lineLimit(3)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 3)
+                .minimumScaleFactor(0.82)
+
+            HStack(spacing: 5) {
+                Image(systemName: "calendar")
+                    .font(.system(size: 9, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.92))
+                Text(Self.raceDayString(payload.raceStart))
+                    .font(WFont.bold(9))
+                    .foregroundStyle(.white.opacity(0.96))
+            }
+            .padding(.top, 5)
+
+            Spacer(minLength: 2)
+
+            PitWallCountdown(
+                d: parts.d,
+                h: parts.h,
+                m: parts.m,
+                valueSize: 17,
+                labelSize: 6,
+                labelMode: .short,
+                showTopHairline: false
+            )
+        }
+        .padding(EdgeInsets(top: 10, leading: 12, bottom: 10, trailing: 12))
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+
+    @ViewBuilder
+    private func systemCardMedium(payload: NextRaceWidgetPayload, parts: (d: Int, h: Int, m: Int)) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 8) {
                 Image(systemName: "flag.checkered.2.crossed")
-                    .font(.system(size: isSmall ? 13 : 15, weight: .semibold))
+                    .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(WF1.red)
                 Text("NEXT RACE")
-                    .font(WFont.bold(isSmall ? 10 : 11))
+                    .font(WFont.bold(10))
+                    .tracking(1.4)
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
+                Spacer(minLength: 4)
+                Text("R\(payload.round)")
+                    .font(WFont.bold(10))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(
+                        Capsule(style: .continuous)
+                            .fill(Color.white.opacity(0.06))
+                            .overlay(
+                                Capsule(style: .continuous)
+                                    .stroke(WF1.red.opacity(0.5), lineWidth: 1)
+                            )
+                    )
+            }
+
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            WF1.red.opacity(0.9),
+                            WF1.red.opacity(0.2),
+                            Color.clear,
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .frame(height: 2)
+                .padding(.top, 7)
+                .padding(.bottom, 10)
+
+            Text(payload.raceName)
+                .font(WFont.heavy(17))
+                .foregroundStyle(.white)
+                .minimumScaleFactor(0.8)
+                .lineLimit(2)
+
+            Text(payload.circuitName)
+                .font(WFont.regular(11))
+                .foregroundStyle(.white.opacity(0.94))
+                .lineLimit(2)
+                .padding(.top, 3)
+
+            HStack(spacing: 6) {
+                Image(systemName: "calendar")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.9))
+                Text(Self.raceDayString(payload.raceStart))
+                    .font(WFont.bold(10))
+                    .foregroundStyle(.white.opacity(0.95))
+            }
+            .padding(.top, 6)
+
+            Spacer(minLength: 2)
+
+            PitWallCountdown(
+                d: parts.d,
+                h: parts.h,
+                m: parts.m,
+                valueSize: 28,
+                labelSize: 8,
+                labelMode: .short,
+                showTopHairline: true
+            )
+        }
+        .padding(EdgeInsets(top: 12, leading: 16, bottom: 14, trailing: 16))
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+
+    @ViewBuilder
+    private func systemCardLarge(payload: NextRaceWidgetPayload, parts: (d: Int, h: Int, m: Int)) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 8) {
+                Image(systemName: "flag.checkered.2.crossed")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(WF1.red)
+                Text("NEXT RACE")
+                    .font(WFont.bold(11))
                     .tracking(1.6)
                     .foregroundStyle(.white)
                 Spacer(minLength: 0)
@@ -304,35 +478,43 @@ struct NextRaceWidgetEntryView: View {
                 )
                 .frame(height: 2)
                 .padding(.top, 8)
-                .padding(.bottom, isSmall ? 10 : 12)
+                .padding(.bottom, 12)
 
             Text(payload.raceName)
-                .font(WFont.heavy(isSmall ? 15 : (isLarge ? 22 : 18)))
+                .font(WFont.heavy(22))
                 .foregroundStyle(.white)
-                .minimumScaleFactor(0.75)
-                .lineLimit(isLarge ? 3 : 2)
+                .minimumScaleFactor(0.78)
+                .lineLimit(3)
 
             Text(payload.circuitName)
-                .font(WFont.regular(isSmall ? 11 : 12))
-                .foregroundStyle(.white.opacity(0.92))
+                .font(WFont.regular(12))
+                .foregroundStyle(.white.opacity(0.94))
                 .lineLimit(2)
                 .padding(.top, 4)
 
             HStack(spacing: 6) {
                 Image(systemName: "calendar")
                     .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(.white.opacity(0.88))
+                    .foregroundStyle(.white.opacity(0.9))
                 Text(Self.raceDayString(payload.raceStart))
                     .font(WFont.bold(11))
-                    .foregroundStyle(.white.opacity(0.9))
+                    .foregroundStyle(.white.opacity(0.95))
             }
             .padding(.top, 8)
 
-            Spacer(minLength: 4)
+            Spacer(minLength: 6)
 
-            PitWallCountdown(d: parts.d, h: parts.h, m: parts.m, isSmall: isSmall, isLarge: isLarge)
+            PitWallCountdown(
+                d: parts.d,
+                h: parts.h,
+                m: parts.m,
+                valueSize: 38,
+                labelSize: 9,
+                labelMode: .long,
+                showTopHairline: true
+            )
         }
-        .padding(isSmall ? 12 : 14)
+        .padding(16)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
     

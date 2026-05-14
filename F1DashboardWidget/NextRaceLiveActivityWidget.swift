@@ -39,6 +39,12 @@ private let raceDayFormatter: DateFormatter = {
     return f
 }()
 
+private enum LiveFont {
+    static func regular(_ size: CGFloat) -> Font { .custom("Orbitron", size: size).weight(.regular) }
+    static func bold(_ size: CGFloat) -> Font { .custom("Orbitron", size: size).weight(.bold) }
+    static func heavy(_ size: CGFloat) -> Font { .custom("Orbitron", size: size).weight(.heavy) }
+}
+
 struct NextRaceLiveActivityWidget: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: NextRaceLiveAttributes.self) { context in
@@ -49,27 +55,27 @@ struct NextRaceLiveActivityWidget: Widget {
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundStyle(LiveIslandTheme.f1Red)
                         Text("NEXT RACE")
-                            .font(.custom("Orbitron-Bold", size: 11))
+                            .font(LiveFont.bold(11))
                             .foregroundStyle(LiveIslandTheme.muted)
                             .tracking(1.2)
                     }
                     Text(context.attributes.raceName)
-                        .font(.custom("Orbitron-ExtraBold", size: 18))
+                        .font(LiveFont.heavy(18))
                         .foregroundStyle(.white)
                         .lineLimit(2)
                         .minimumScaleFactor(0.88)
                     Text(context.attributes.circuitName)
-                        .font(.custom("Orbitron-Regular", size: 13))
+                        .font(LiveFont.regular(13))
                         .foregroundStyle(LiveIslandTheme.muted)
                         .lineLimit(2)
                         .minimumScaleFactor(0.9)
                     HStack {
                         Text(raceDayFormatter.string(from: context.attributes.raceStart))
-                            .font(.custom("Orbitron-Bold", size: 11))
+                            .font(LiveFont.bold(11))
                             .foregroundStyle(LiveIslandTheme.muted)
                         Spacer(minLength: 8)
                         Text(LiveCountdown.dhm(from: timeline.date, to: context.attributes.raceStart))
-                            .font(.custom("Orbitron-ExtraBold", size: 26))
+                            .font(LiveFont.heavy(26))
                             .foregroundStyle(.white)
                             .monospacedDigit()
                     }
@@ -93,7 +99,7 @@ struct NextRaceLiveActivityWidget: Widget {
                                 .foregroundStyle(LiveIslandTheme.f1Red)
                         }
                         Text("NEXT RACE")
-                            .font(.custom("Orbitron-Bold", size: 9))
+                            .font(LiveFont.bold(9))
                             .foregroundStyle(LiveIslandTheme.muted)
                             .tracking(1.4)
                     }
@@ -105,10 +111,10 @@ struct NextRaceLiveActivityWidget: Widget {
                     TimelineView(PeriodicTimelineSchedule(from: Date(), by: 60)) { timeline in
                         VStack(alignment: .trailing, spacing: 6) {
                             Text(raceDayFormatter.string(from: context.attributes.raceStart))
-                                .font(.custom("Orbitron-Bold", size: 10))
+                                .font(LiveFont.bold(10))
                                 .foregroundStyle(LiveIslandTheme.muted)
                             Text(LiveCountdown.dhm(from: timeline.date, to: context.attributes.raceStart))
-                                .font(.custom("Orbitron-ExtraBold", size: 22))
+                                .font(LiveFont.heavy(22))
                                 .foregroundStyle(.white)
                                 .monospacedDigit()
                                 .multilineTextAlignment(.trailing)
@@ -137,13 +143,13 @@ struct NextRaceLiveActivityWidget: Widget {
                             .frame(height: 2)
                             .padding(.bottom, 2)
                         Text(context.attributes.raceName)
-                            .font(.custom("Orbitron-Bold", size: 15))
+                            .font(LiveFont.bold(15))
                             .foregroundStyle(.white)
                             .lineLimit(2)
                             .minimumScaleFactor(0.85)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         Text(context.attributes.circuitName)
-                            .font(.custom("Orbitron-Regular", size: 12))
+                            .font(LiveFont.regular(12))
                             .foregroundStyle(LiveIslandTheme.muted)
                             .lineLimit(2)
                             .minimumScaleFactor(0.88)
@@ -165,7 +171,7 @@ struct NextRaceLiveActivityWidget: Widget {
             } compactTrailing: {
                 TimelineView(PeriodicTimelineSchedule(from: Date(), by: 60)) { timeline in
                     Text(LiveCountdown.dhmCompact(from: timeline.date, to: context.attributes.raceStart))
-                        .font(.custom("Orbitron-Bold", size: 12))
+                        .font(LiveFont.bold(12))
                         .foregroundStyle(.white)
                         .monospacedDigit()
                         .lineLimit(1)
