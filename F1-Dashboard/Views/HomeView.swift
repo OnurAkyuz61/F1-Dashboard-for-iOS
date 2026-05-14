@@ -95,7 +95,7 @@ struct HomeView: View {
             updateCountdown()
         }
         .sheet(isPresented: $showAbout) {
-            AboutView()
+            AboutView(showDismiss: true)
         }
     }
     

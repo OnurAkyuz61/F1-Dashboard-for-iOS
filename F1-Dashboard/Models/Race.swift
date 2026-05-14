@@ -35,6 +35,17 @@ struct RaceTable: Codable {
     }
 }
 
+/// One row from `Results` (race results JSON); position `"1"` is the winner.
+struct GrandPrixResultRow: Codable {
+    let position: String
+    let driver: Driver
+    
+    enum CodingKeys: String, CodingKey {
+        case position
+        case driver = "Driver"
+    }
+}
+
 struct Race: Codable, Identifiable {
     let id = UUID()
     let season: String
@@ -49,6 +60,8 @@ struct Race: Codable, Identifiable {
     let thirdPractice: Session?
     let qualifying: Session?
     let sprint: Session?
+    /// Present on `.../results.json` responses; absent on schedule-only payloads.
+    let results: [GrandPrixResultRow]?
     
     enum CodingKeys: String, CodingKey {
         case season
@@ -63,6 +76,12 @@ struct Race: Codable, Identifiable {
         case thirdPractice = "ThirdPractice"
         case qualifying = "Qualifying"
         case sprint = "Sprint"
+        case results = "Results"
+    }
+    
+    /// Winner full name when `results` includes a row with `position == "1"`.
+    var winnerFullName: String? {
+        results?.first(where: { $0.position == "1" })?.driver.fullName
     }
     
     var raceDate: Date? {

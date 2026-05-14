@@ -33,6 +33,11 @@ struct ContentView: View {
                     .tabItem {
                         Label("Teams", systemImage: "person.3.fill")
                     }
+                
+                AboutView(showDismiss: false)
+                    .tabItem {
+                        Label("About", systemImage: "info.circle.fill")
+                    }
             }
             .tint(.f1Red)
             .onAppear {

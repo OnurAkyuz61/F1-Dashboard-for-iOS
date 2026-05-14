@@ -262,4 +262,23 @@ class F1DataService {
             return []
         }
     }
+    
+    /// Winner per round from `current/results.json` (matches web dashboard data source).
+    func fetchWinnersByRound() async -> [String: String] {
+        do {
+            let data = try await fetchJSON(path: "current/results.json?limit=1000")
+            let response = try jsonDecoder.decode(ErgastResponse.self, from: data)
+            guard let races = response.mrData.raceTable?.races else { return [:] }
+            var winners: [String: String] = [:]
+            for race in races {
+                if let name = race.winnerFullName {
+                    winners[race.round] = name
+                }
+            }
+            return winners
+        } catch {
+            print("DEBUG ERROR: fetchWinnersByRound — \(error.localizedDescription)")
+            return [:]
+        }
+    }
 }

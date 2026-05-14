@@ -9,7 +9,13 @@ import SwiftUI
 
 struct RacesView: View {
     @State private var races: [Race] = []
+    @State private var winnersByRound: [String: String] = [:]
     @State private var isLoading = true
+    
+    private var seasonYear: Int {
+        if let s = races.first?.season, let y = Int(s) { return y }
+        return Calendar.current.component(.year, from: Date())
+    }
     
     var body: some View {
         ZStack {
@@ -20,7 +26,7 @@ struct RacesView: View {
                     ProgressView()
                         .tint(.f1Red)
                     Text("Loading Race Calendar...")
-                        .font(.system(.headline, design: .rounded))
+                        .font(F1Typography.sectionTitle())
                         .foregroundColor(.white.opacity(0.7))
                         .padding(.top, 16)
                 }
@@ -30,20 +36,40 @@ struct RacesView: View {
                         .font(.system(.largeTitle))
                         .foregroundColor(.f1Red.opacity(0.5))
                     Text("No races available")
-                        .font(.system(.headline, design: .rounded))
+                        .font(F1Typography.sectionTitle())
                         .foregroundColor(.white.opacity(0.7))
                         .padding(.top, 16)
                 }
             } else {
                 ScrollView {
-                    LazyVStack(spacing: 16) {
-                        ForEach(races) { race in
-                            PremiumRaceCard(race: race)
+                    VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Race Schedule")
+                                .font(F1Typography.displayLarge())
+                                .foregroundColor(.white)
+                                .f1DisplayStyle()
+                            
+                            Text("\(seasonYear) Formula 1 World Championship")
+                                .font(.system(size: 15, weight: .medium, design: .default))
+                                .foregroundColor(.white.opacity(0.55))
                         }
+                        .padding(.horizontal, 4)
+                        
+                        LazyVStack(spacing: 16) {
+                            ForEach(races) { race in
+                                PremiumRaceCard(
+                                    race: race,
+                                    winnerName: winnersByRound[race.round]
+                                )
+                            }
+                        }
+                        
+                        AttributionFooter()
+                            .padding(.top, 12)
+                            .padding(.bottom, 100)
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 20)
-                    .padding(.bottom, 90)
                 }
             }
         }
@@ -54,21 +80,46 @@ struct RacesView: View {
     
     private func loadData() async {
         isLoading = true
-        let fetchedRaces = await F1DataService.shared.fetchSchedule()
+        async let scheduleTask = F1DataService.shared.fetchSchedule()
+        async let winnersTask = F1DataService.shared.fetchWinnersByRound()
+        
+        let (fetchedRaces, winners) = await (scheduleTask, winnersTask)
         
         await MainActor.run {
             self.races = fetchedRaces.sorted { race1, race2 in
                 guard let date1 = race1.raceDate, let date2 = race2.raceDate else { return false }
                 return date1 < date2
             }
+            self.winnersByRound = winners
             self.isLoading = false
         }
     }
 }
 
 // MARK: - Premium Race Card
+private enum RaceCardDateFormatters {
+    static let day: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = TimeZone.current
+        f.dateFormat = "MMM dd, yyyy"
+        return f
+    }()
+    
+    static let timeOnly: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = TimeZone.current
+        f.dateStyle = .none
+        f.timeStyle = .short
+        return f
+    }()
+}
+
 struct PremiumRaceCard: View {
     let race: Race
+    /// From `current/results.json`, keyed by `round`.
+    var winnerName: String?
     
     var isUpcoming: Bool {
         guard let raceDate = race.raceDate else { return false }
@@ -80,45 +131,43 @@ struct PremiumRaceCard: View {
         return raceDate < Date()
     }
     
-    var formattedDate: String {
+    var formattedDateLine: String {
         guard let raceDate = race.raceDate else { return "TBD" }
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter.string(from: raceDate)
+        let day = RaceCardDateFormatters.day.string(from: raceDate)
+        let time = RaceCardDateFormatters.timeOnly.string(from: raceDate)
+        return "\(day) • \(time)"
     }
     
     var body: some View {
         VStack(spacing: 0) {
-            // Top Row: Round Badge & Status Badge
-            HStack {
-                // Round Badge
-                Text("Round \(race.round)")
-                    .font(.system(.caption, design: .monospaced))
-                    .fontWeight(.medium)
-                    .foregroundColor(.white.opacity(0.7))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.white.opacity(0.1))
-                    .cornerRadius(12)
-                
-                Spacer()
-                
-                // Status Badge
-                HStack(spacing: 6) {
-                    Circle()
-                        .fill(isUpcoming ? Color.f1Red : Color.green)
-                        .frame(width: 8, height: 8)
-                    
-                    Text(isUpcoming ? "Upcoming" : isPast ? "Completed" : "Live")
-                        .font(.system(.caption, design: .rounded))
-                        .fontWeight(.semibold)
-                        .foregroundColor(isUpcoming ? .f1Red : isPast ? .green : .f1Red)
+            HStack(alignment: .center) {
+                HStack(spacing: 8) {
+                    Image(systemName: "flag.checkered.2.crossed")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.f1Red)
+                    Text("Round \(race.round)")
+                        .font(.system(size: 12, weight: .bold, design: .default))
+                        .foregroundColor(.white.opacity(0.75))
+                        .textCase(.uppercase)
+                        .tracking(F1Typography.labelTracking)
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .background((isUpcoming ? Color.f1Red : Color.green).opacity(0.15))
-                .cornerRadius(12)
+                .background(Color.white.opacity(0.08))
+                .cornerRadius(10)
+                
+                Spacer()
+                
+                Text(isUpcoming ? "UPCOMING" : "COMPLETED")
+                    .font(.system(size: 11, weight: .heavy, design: .default))
+                    .foregroundColor(isUpcoming ? .f1Red : .white.opacity(0.45))
+                    .tracking(1)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        (isUpcoming ? Color.f1Red : Color.white.opacity(0.2)).opacity(isUpcoming ? 0.18 : 0.12)
+                    )
+                    .cornerRadius(10)
             }
             .padding(.horizontal, 20)
             .padding(.top, 20)
@@ -128,17 +177,22 @@ struct PremiumRaceCard: View {
                 .background(Color.white.opacity(0.1))
                 .padding(.horizontal, 20)
             
-            // Middle: Race Name - Large Title
             VStack(spacing: 8) {
                 Text(race.raceName)
-                    .font(.system(.title2, design: .rounded))
-                    .fontWeight(.bold)
+                    .font(.system(size: 22, weight: .heavy, design: .default))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
+                    .minimumScaleFactor(0.85)
                 
-                Text(race.circuit.circuitName)
-                    .font(.system(.subheadline, design: .rounded))
-                    .foregroundColor(.white.opacity(0.7))
+                HStack(spacing: 6) {
+                    Image(systemName: "mappin.and.ellipse")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.f1Red.opacity(0.85))
+                    Text(race.circuit.circuitName)
+                        .font(.system(size: 14, weight: .medium, design: .default))
+                        .foregroundColor(.white.opacity(0.65))
+                        .multilineTextAlignment(.center)
+                }
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
@@ -147,32 +201,47 @@ struct PremiumRaceCard: View {
                 .background(Color.white.opacity(0.1))
                 .padding(.horizontal, 20)
             
-            // Bottom: Date & Time - Formatted Neatly
-            HStack(spacing: 12) {
+            HStack(spacing: 10) {
                 Image(systemName: "calendar")
-                    .font(.system(.caption))
-                    .foregroundColor(.f1Red.opacity(0.7))
-                
-                Text(formattedDate)
-                    .font(.system(.subheadline, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.8))
-                
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.f1Red.opacity(0.85))
+                Text(formattedDateLine)
+                    .font(.system(size: 14, weight: .medium, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.85))
                 Spacer()
-                
-                Image(systemName: "location.fill")
-                    .font(.system(.caption))
-                    .foregroundColor(.f1Red.opacity(0.7))
-                
-                Text("\(race.circuit.location.locality), \(race.circuit.location.country)")
-                    .font(.system(.caption, design: .rounded))
-                    .foregroundColor(.white.opacity(0.6))
             }
             .padding(.horizontal, 20)
-            .padding(.top, 16)
+            .padding(.top, 14)
+            
+            if isPast, let winner = winnerName, !winner.isEmpty {
+                HStack(spacing: 8) {
+                    Image(systemName: "trophy.fill")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(Color(hex: "E8C547"))
+                    Text("Winner: \(winner)")
+                        .font(.system(size: 14, weight: .semibold, design: .default))
+                        .foregroundColor(Color(hex: "E8C547"))
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+            }
+            
+            HStack(spacing: 6) {
+                Image(systemName: "location.fill")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.f1Red.opacity(0.75))
+                Text("\(race.circuit.location.locality), \(race.circuit.location.country)")
+                    .font(.system(size: 12, weight: .medium, design: .default))
+                    .foregroundColor(.white.opacity(0.5))
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 10)
             .padding(.bottom, 20)
         }
         .glassCard()
-        .opacity(isPast ? 0.65 : 1.0)
+        .opacity(isPast ? 0.92 : 1.0)
     }
 }
 
