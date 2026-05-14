@@ -49,14 +49,17 @@ struct ContentView: View {
                 
                 // Selected item
                 appearance.stackedLayoutAppearance.selected.iconColor = UIColor(Color.f1Red)
+                let orbitronSelected = UIFont(name: "Orbitron-Bold", size: 10) ?? .systemFont(ofSize: 10, weight: .bold)
+                let orbitronNormal = UIFont(name: "Orbitron-Regular", size: 10) ?? .systemFont(ofSize: 10)
                 appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-                    .foregroundColor: UIColor(Color.f1Red)
+                    .foregroundColor: UIColor(Color.f1Red),
+                    .font: orbitronSelected,
                 ]
                 
-                // Normal item
                 appearance.stackedLayoutAppearance.normal.iconColor = UIColor.white.withAlphaComponent(0.6)
                 appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-                    .foregroundColor: UIColor.white.withAlphaComponent(0.6)
+                    .foregroundColor: UIColor.white.withAlphaComponent(0.6),
+                    .font: orbitronNormal,
                 ]
                 
                 UITabBar.appearance().standardAppearance = appearance

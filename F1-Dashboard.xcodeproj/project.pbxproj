@@ -8,6 +8,7 @@
 
 /* Begin PBXFileReference section */
 		DC69B5702F0AEBE100A04FB9 /* F1-Dashboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "F1-Dashboard.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2A000012F0AEBE100A04FB9 /* F1DashboardWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = F1DashboardWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -16,10 +17,22 @@
 			path = "F1-Dashboard";
 			sourceTree = "<group>";
 		};
+		F2A000022F0AEBE100A04FB9 /* F1DashboardWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = F1DashboardWidget;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		DC69B56D2F0AEBE100A04FB9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F2A000082F0AEBE100A04FB9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -33,6 +46,7 @@
 			isa = PBXGroup;
 			children = (
 				DC69B5722F0AEBE100A04FB9 /* F1-Dashboard */,
+				F2A000022F0AEBE100A04FB9 /* F1DashboardWidget */,
 				DC69B5712F0AEBE100A04FB9 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +55,7 @@
 			isa = PBXGroup;
 			children = (
 				DC69B5702F0AEBE100A04FB9 /* F1-Dashboard.app */,
+				F2A000012F0AEBE100A04FB9 /* F1DashboardWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -54,21 +69,47 @@
 			buildPhases = (
 				DC69B56C2F0AEBE100A04FB9 /* Sources */,
 				DC69B56D2F0AEBE100A04FB9 /* Frameworks */,
+				F2A000052F0AEBE100A04FB9 /* Embed Foundation Extensions */,
 				DC69B56E2F0AEBE100A04FB9 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				F2A000072F0AEBE100A04FB9 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				DC69B5722F0AEBE100A04FB9 /* F1-Dashboard */,
 			);
 			name = "F1-Dashboard";
 			packageProductDependencies = (
+				F2B000022F0AEBE100A04FB9 /* F1Core */,
 			);
 			productName = "F1-Dashboard";
 			productReference = DC69B5702F0AEBE100A04FB9 /* F1-Dashboard.app */;
 			productType = "com.apple.product-type.application";
+		};
+		F2A000032F0AEBE100A04FB9 /* F1DashboardWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F2A0000B2F0AEBE100A04FB9 /* Build configuration list for PBXNativeTarget "F1DashboardWidget" */;
+			buildPhases = (
+				F2A0000A2F0AEBE100A04FB9 /* Sources */,
+				F2A000082F0AEBE100A04FB9 /* Frameworks */,
+				F2A000092F0AEBE100A04FB9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				F2A000022F0AEBE100A04FB9 /* F1DashboardWidget */,
+			);
+			name = F1DashboardWidget;
+			packageProductDependencies = (
+				F2B000022F0AEBE100A04FB9 /* F1Core */,
+			);
+			productName = F1DashboardWidget;
+			productReference = F2A000012F0AEBE100A04FB9 /* F1DashboardWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -83,6 +124,9 @@
 					DC69B56F2F0AEBE100A04FB9 = {
 						CreatedOnToolsVersion = 26.2;
 					};
+					F2A000032F0AEBE100A04FB9 = {
+						CreatedOnToolsVersion = 26.2;
+					};
 				};
 			};
 			buildConfigurationList = DC69B56B2F0AEBE100A04FB9 /* Build configuration list for PBXProject "F1-Dashboard" */;
@@ -94,18 +138,29 @@
 			);
 			mainGroup = DC69B5672F0AEBE100A04FB9;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F2B000012F0AEBE100A04FB9 /* XCLocalSwiftPackageReference */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DC69B5712F0AEBE100A04FB9 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				DC69B56F2F0AEBE100A04FB9 /* F1-Dashboard */,
+				F2A000032F0AEBE100A04FB9 /* F1DashboardWidget */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		DC69B56E2F0AEBE100A04FB9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F2A000092F0AEBE100A04FB9 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +177,65 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F2A0000A2F0AEBE100A04FB9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXBuildFile section */
+		F2A000042F0AEBE100A04FB9 /* F1DashboardWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = F2A000012F0AEBE100A04FB9 /* F1DashboardWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F2A000052F0AEBE100A04FB9 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				F2A000042F0AEBE100A04FB9 /* F1DashboardWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXContainerItemProxy section */
+		F2A000062F0AEBE100A04FB9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DC69B5682F0AEBE100A04FB9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F2A000032F0AEBE100A04FB9;
+			remoteInfo = F1DashboardWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXTargetDependency section */
+		F2A000072F0AEBE100A04FB9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F2A000032F0AEBE100A04FB9 /* F1DashboardWidget */;
+			targetProxy = F2A000062F0AEBE100A04FB9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		F2B000012F0AEBE100A04FB9 /* XCLocalSwiftPackageReference */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = F1Core;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F2B000022F0AEBE100A04FB9 /* F1Core */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2B000012F0AEBE100A04FB9 /* XCLocalSwiftPackageReference */;
+			productName = F1Core;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCBuildConfiguration section */
 		DC69B57B2F0AEBE200A04FB9 /* Debug */ = {
@@ -253,11 +366,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "F1-Dashboard/F1-Dashboard.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 287WZ2ML8F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "F1-Dashboard/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -285,11 +400,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "F1-Dashboard/F1-Dashboard.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 287WZ2ML8F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "F1-Dashboard/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -303,6 +420,66 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "onurakyuz.F1-Dashboard";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		F2C0000C2F0AEBE100A04FB9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = F1DashboardWidget/F1DashboardWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 287WZ2ML8F;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = F1DashboardWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "F1 Widget";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "onurakyuz.F1-Dashboard.F1DashboardWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F2C0000D2F0AEBE100A04FB9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = F1DashboardWidget/F1DashboardWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 287WZ2ML8F;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = F1DashboardWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "F1 Widget";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "onurakyuz.F1-Dashboard.F1DashboardWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -329,6 +506,15 @@
 			buildConfigurations = (
 				DC69B57E2F0AEBE200A04FB9 /* Debug */,
 				DC69B57F2F0AEBE200A04FB9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F2A0000B2F0AEBE100A04FB9 /* Build configuration list for PBXNativeTarget "F1DashboardWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F2C0000C2F0AEBE100A04FB9 /* Debug */,
+				F2C0000D2F0AEBE100A04FB9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

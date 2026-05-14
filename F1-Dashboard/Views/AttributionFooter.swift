@@ -8,7 +8,7 @@ import SwiftUI
 struct AttributionFooter: View {
     var body: some View {
         Text("Data provided by Jolpi/Ergast API. F1, FORMULA 1, and related marks are trademarks of Formula One Licensing BV.")
-            .font(.system(size: 11, weight: .regular, design: .default))
+            .font(AppFont.orbitron(11, weight: .regular))
             .foregroundColor(.white.opacity(0.45))
             .multilineTextAlignment(.center)
             .padding(.horizontal, 24)

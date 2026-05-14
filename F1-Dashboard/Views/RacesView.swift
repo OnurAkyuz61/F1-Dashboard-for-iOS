@@ -50,7 +50,7 @@ struct RacesView: View {
                                 .f1DisplayStyle()
                             
                             Text("\(seasonYear) Formula 1 World Championship")
-                                .font(.system(size: 15, weight: .medium, design: .default))
+                                .font(AppFont.orbitron(15, weight: .medium))
                                 .foregroundColor(.white.opacity(0.55))
                         }
                         .padding(.horizontal, 4)
@@ -146,7 +146,7 @@ struct PremiumRaceCard: View {
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.f1Red)
                     Text("Round \(race.round)")
-                        .font(.system(size: 12, weight: .bold, design: .default))
+                        .font(AppFont.orbitron(12, weight: .bold))
                         .foregroundColor(.white.opacity(0.75))
                         .textCase(.uppercase)
                         .tracking(F1Typography.labelTracking)
@@ -159,7 +159,7 @@ struct PremiumRaceCard: View {
                 Spacer()
                 
                 Text(isUpcoming ? "UPCOMING" : "COMPLETED")
-                    .font(.system(size: 11, weight: .heavy, design: .default))
+                    .font(AppFont.orbitron(11, weight: .heavy))
                     .foregroundColor(isUpcoming ? .f1Red : .white.opacity(0.45))
                     .tracking(1)
                     .padding(.horizontal, 12)
@@ -179,7 +179,7 @@ struct PremiumRaceCard: View {
             
             VStack(spacing: 8) {
                 Text(race.raceName)
-                    .font(.system(size: 22, weight: .heavy, design: .default))
+                    .font(AppFont.orbitron(22, weight: .heavy))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .minimumScaleFactor(0.85)
@@ -189,7 +189,7 @@ struct PremiumRaceCard: View {
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(.f1Red.opacity(0.85))
                     Text(race.circuit.circuitName)
-                        .font(.system(size: 14, weight: .medium, design: .default))
+                        .font(AppFont.orbitron(14, weight: .medium))
                         .foregroundColor(.white.opacity(0.65))
                         .multilineTextAlignment(.center)
                 }
@@ -206,7 +206,8 @@ struct PremiumRaceCard: View {
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(.f1Red.opacity(0.85))
                 Text(formattedDateLine)
-                    .font(.system(size: 14, weight: .medium, design: .monospaced))
+                    .font(AppFont.orbitron(14, weight: .medium))
+                    .monospacedDigit()
                     .foregroundColor(.white.opacity(0.85))
                 Spacer()
             }
@@ -219,7 +220,7 @@ struct PremiumRaceCard: View {
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(Color(hex: "E8C547"))
                     Text("Winner: \(winner)")
-                        .font(.system(size: 14, weight: .semibold, design: .default))
+                        .font(AppFont.orbitron(14, weight: .semibold))
                         .foregroundColor(Color(hex: "E8C547"))
                     Spacer(minLength: 0)
                 }
@@ -232,7 +233,7 @@ struct PremiumRaceCard: View {
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(.f1Red.opacity(0.75))
                 Text("\(race.circuit.location.locality), \(race.circuit.location.country)")
-                    .font(.system(size: 12, weight: .medium, design: .default))
+                    .font(AppFont.orbitron(12, weight: .medium))
                     .foregroundColor(.white.opacity(0.5))
                 Spacer()
             }

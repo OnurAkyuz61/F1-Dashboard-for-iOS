@@ -46,8 +46,7 @@ struct StandingsView: View {
                     
                     // Season Badge
                     Text(seasonDisplay)
-                        .font(.system(.caption, design: .rounded))
-                        .fontWeight(.medium)
+                        .font(AppFont.orbitron(12, weight: .medium))
                         .foregroundColor(.white.opacity(0.7))
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
@@ -122,7 +121,8 @@ struct PremiumStandingRow: View {
         HStack(spacing: 16) {
             // Rank - Big, Bold, Monospaced
             Text(standing.position)
-                .font(.system(size: 32, weight: .bold, design: .monospaced))
+                .font(AppFont.orbitron(32, weight: .bold))
+                .monospacedDigit()
                 .foregroundColor(rankColor)
                 .frame(width: 50, alignment: .leading)
             
@@ -130,19 +130,18 @@ struct PremiumStandingRow: View {
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 4) {
                     Text(standing.driver.givenName)
-                        .font(.system(.headline, design: .rounded))
+                        .font(AppFont.orbitron(17, weight: .regular))
                         .foregroundColor(.white.opacity(0.6))
                     
                     Text(standing.driver.familyName)
-                        .font(.system(.headline, design: .rounded))
-                        .fontWeight(.bold)
+                        .font(AppFont.orbitron(17, weight: .bold))
                         .foregroundColor(.white)
                 }
                 
                 // Team Name
                 if let constructor = standing.constructors.first {
                     Text(constructor.name)
-                        .font(.system(.caption, design: .rounded))
+                        .font(AppFont.orbitron(12, weight: .regular))
                         .foregroundColor(.white.opacity(0.5))
                 }
             }
@@ -151,8 +150,8 @@ struct PremiumStandingRow: View {
             
             // Points - Accent Red
             Text(standing.points)
-                .font(.system(.title2, design: .monospaced))
-                .fontWeight(.bold)
+                .font(AppFont.orbitron(22, weight: .bold))
+                .monospacedDigit()
                 .foregroundColor(.f1Red)
         }
         .padding(18)
@@ -168,19 +167,19 @@ struct PremiumConstructorRow: View {
         HStack(spacing: 16) {
             // Rank
             Text(standing.position)
-                .font(.system(size: 32, weight: .bold, design: .monospaced))
+                .font(AppFont.orbitron(32, weight: .bold))
+                .monospacedDigit()
                 .foregroundColor(.white)
                 .frame(width: 50, alignment: .leading)
             
             // Constructor Info
             VStack(alignment: .leading, spacing: 6) {
                 Text(standing.constructor.name)
-                    .font(.system(.headline, design: .rounded))
-                    .fontWeight(.bold)
+                    .font(AppFont.orbitron(17, weight: .bold))
                     .foregroundColor(.white)
                 
                 Text(standing.constructor.nationality)
-                    .font(.system(.caption, design: .rounded))
+                    .font(AppFont.orbitron(12, weight: .regular))
                     .foregroundColor(.white.opacity(0.5))
             }
             
@@ -188,8 +187,8 @@ struct PremiumConstructorRow: View {
             
             // Points
             Text(standing.points)
-                .font(.system(.title2, design: .monospaced))
-                .fontWeight(.bold)
+                .font(AppFont.orbitron(22, weight: .bold))
+                .monospacedDigit()
                 .foregroundColor(.f1Red)
         }
         .padding(18)

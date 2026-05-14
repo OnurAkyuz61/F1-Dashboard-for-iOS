@@ -9,9 +9,16 @@ import SwiftUI
 
 @main
 struct F1_DashboardApp: App {
+    init() {
+        UserDefaults.standard.register(defaults: [
+            "raceRemindersEnabled": true,
+            "liveActivitiesEnabled": true,
+        ])
+    }
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
                 .preferredColorScheme(.dark)
         }
     }

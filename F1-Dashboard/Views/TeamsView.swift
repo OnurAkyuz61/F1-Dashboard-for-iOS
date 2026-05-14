@@ -25,7 +25,7 @@ struct TeamsView: View {
                     ProgressView()
                         .tint(.f1Red)
                     Text("Loading Teams...")
-                        .font(.system(.headline, design: .rounded))
+                        .font(AppFont.orbitron(17, weight: .semibold))
                         .foregroundColor(.white.opacity(0.7))
                         .padding(.top, 16)
                 }
@@ -35,7 +35,7 @@ struct TeamsView: View {
                         .font(.system(.largeTitle))
                         .foregroundColor(.f1Red.opacity(0.5))
                     Text("No teams available")
-                        .font(.system(.headline, design: .rounded))
+                        .font(AppFont.orbitron(17, weight: .semibold))
                         .foregroundColor(.white.opacity(0.7))
                         .padding(.top, 16)
                 }
@@ -82,8 +82,7 @@ struct PremiumTeamCard: View {
             
             // Team Name - Large
             Text(standing.constructor.name)
-                .font(.system(.title3, design: .rounded))
-                .fontWeight(.bold)
+                .font(AppFont.orbitron(20, weight: .bold))
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
@@ -95,21 +94,21 @@ struct PremiumTeamCard: View {
             VStack(spacing: 8) {
                 HStack(spacing: 4) {
                     Text("Position:")
-                        .font(.system(.caption, design: .rounded))
+                        .font(AppFont.orbitron(12, weight: .regular))
                         .foregroundColor(.white.opacity(0.6))
                     Text("#\(standing.position)")
-                        .font(.system(.headline, design: .monospaced))
-                        .fontWeight(.bold)
+                        .font(AppFont.orbitron(17, weight: .bold))
+                        .monospacedDigit()
                         .foregroundColor(.white)
                 }
                 
                 HStack(spacing: 4) {
                     Text("Points:")
-                        .font(.system(.caption, design: .rounded))
+                        .font(AppFont.orbitron(12, weight: .regular))
                         .foregroundColor(.white.opacity(0.6))
                     Text(standing.points)
-                        .font(.system(.headline, design: .monospaced))
-                        .fontWeight(.bold)
+                        .font(AppFont.orbitron(17, weight: .bold))
+                        .monospacedDigit()
                         .foregroundColor(.f1Red)
                 }
             }

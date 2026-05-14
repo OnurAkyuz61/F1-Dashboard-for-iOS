@@ -30,20 +30,22 @@ struct AboutView: View {
                     
                     VStack(spacing: 6) {
                         Text("F1 DASHBOARD")
-                            .font(.system(size: 26, weight: .heavy, design: .default))
+                            .font(AppFont.orbitron(26, weight: .heavy))
                             .foregroundColor(.white)
                             .f1DisplayStyle(tracking: 2)
                         
                         Text("Unofficial companion for iOS")
-                            .font(.system(size: 15, weight: .medium, design: .default))
+                            .font(AppFont.orbitron(15, weight: .medium))
                             .foregroundColor(.white.opacity(0.55))
                     }
                     
                     Text("This app shows live season schedules, standings, and race winners using the same public JSON API as the web dashboard — no private backend.")
-                        .font(.system(size: 15, weight: .regular, design: .default))
+                        .font(AppFont.orbitron(15, weight: .regular))
                         .foregroundColor(.white.opacity(0.72))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 8)
+                    
+                    SettingsPermissionsView()
                     
                     VStack(spacing: 14) {
                         linkRow(
@@ -64,11 +66,11 @@ struct AboutView: View {
                     
                     VStack(spacing: 10) {
                         Text("Designed & built by")
-                            .font(.system(size: 13, weight: .medium, design: .default))
+                            .font(AppFont.orbitron(13, weight: .medium))
                             .foregroundColor(.white.opacity(0.5))
                         
                         Text("Onur AKyüz")
-                            .font(.system(size: 22, weight: .heavy, design: .default))
+                            .font(AppFont.orbitron(22, weight: .heavy))
                             .foregroundColor(.f1Red)
                     }
                     .padding(.top, 8)
@@ -79,7 +81,7 @@ struct AboutView: View {
                     if showDismiss {
                         Button(action: { dismiss() }) {
                             Text("Close")
-                                .font(.system(size: 17, weight: .semibold, design: .default))
+                                .font(AppFont.orbitron(17, weight: .semibold))
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
@@ -106,10 +108,10 @@ struct AboutView: View {
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(.system(size: 16, weight: .semibold, design: .default))
+                        .font(AppFont.orbitron(16, weight: .semibold))
                         .foregroundColor(.white)
                     Text(subtitle)
-                        .font(.system(size: 12, weight: .medium, design: .default))
+                        .font(AppFont.orbitron(12, weight: .medium))
                         .foregroundColor(.white.opacity(0.45))
                 }
                 
