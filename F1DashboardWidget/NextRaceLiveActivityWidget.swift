@@ -13,68 +13,168 @@ private enum LiveCountdown {
         if h > 0 { return "\(h)h \(m)m" }
         return "\(m)m"
     }
+
+    /// Shorter string for compact Dynamic Island / pill.
+    static func dhmCompact(from now: Date, to target: Date) -> String {
+        let seconds = max(0, target.timeIntervalSince(now))
+        let d = Int(seconds) / 86_400
+        let h = (Int(seconds) % 86_400) / 3_600
+        let m = (Int(seconds) % 3_600) / 60
+        if d > 0 { return "\(d)d \(h)h" }
+        if h > 0 { return "\(h)h \(m)m" }
+        return "\(m)m"
+    }
 }
+
+private enum LiveIslandTheme {
+    static let f1Red = Color(red: 1, green: 0.09, blue: 0.02)
+    static let muted = Color.white.opacity(0.72)
+    static let pillFill = Color.white.opacity(0.1)
+}
+
+private let raceDayFormatter: DateFormatter = {
+    let f = DateFormatter()
+    f.dateFormat = "d MMM yyyy"
+    f.locale = Locale(identifier: "en_GB")
+    return f
+}()
 
 struct NextRaceLiveActivityWidget: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: NextRaceLiveAttributes.self) { context in
             TimelineView(PeriodicTimelineSchedule(from: Date(), by: 60)) { timeline in
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("NEXT RACE")
-                        .font(.custom("Orbitron-Bold", size: 11))
-                        .foregroundStyle(.white.opacity(0.88))
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "flag.checkered.2.crossed")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(LiveIslandTheme.f1Red)
+                        Text("NEXT RACE")
+                            .font(.custom("Orbitron-Bold", size: 11))
+                            .foregroundStyle(LiveIslandTheme.muted)
+                            .tracking(1.2)
+                    }
                     Text(context.attributes.raceName)
                         .font(.custom("Orbitron-ExtraBold", size: 18))
                         .foregroundStyle(.white)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.88)
                     Text(context.attributes.circuitName)
                         .font(.custom("Orbitron-Regular", size: 13))
-                        .foregroundStyle(.white.opacity(0.78))
-                    Text(LiveCountdown.dhm(from: timeline.date, to: context.attributes.raceStart))
-                        .font(.custom("Orbitron-ExtraBold", size: 30))
-                        .foregroundStyle(.white)
-                        .monospacedDigit()
+                        .foregroundStyle(LiveIslandTheme.muted)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.9)
+                    HStack {
+                        Text(raceDayFormatter.string(from: context.attributes.raceStart))
+                            .font(.custom("Orbitron-Bold", size: 11))
+                            .foregroundStyle(LiveIslandTheme.muted)
+                        Spacer(minLength: 8)
+                        Text(LiveCountdown.dhm(from: timeline.date, to: context.attributes.raceStart))
+                            .font(.custom("Orbitron-ExtraBold", size: 26))
+                            .foregroundStyle(.white)
+                            .monospacedDigit()
+                    }
+                    .padding(.top, 2)
                 }
-                .padding()
+                .padding(.horizontal, 18)
+                .padding(.vertical, 16)
             }
-            .activityBackgroundTint(Color(red: 0.06, green: 0.06, blue: 0.07))
+            .activityBackgroundTint(Color(red: 0.06, green: 0.06, blue: 0.08))
             .activitySystemActionForegroundColor(Color.white)
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    TimelineView(PeriodicTimelineSchedule(from: Date(), by: 60)) { timeline in
-                        VStack(alignment: .leading) {
-                            Text(context.attributes.raceName)
-                                .font(.custom("Orbitron-Bold", size: 14))
-                                .foregroundStyle(.white)
-                            Text(context.attributes.circuitName)
-                                .font(.custom("Orbitron-Regular", size: 11))
-                                .foregroundStyle(.white.opacity(0.78))
+                    VStack(alignment: .leading, spacing: 8) {
+                        ZStack {
+                            Circle()
+                                .fill(LiveIslandTheme.pillFill)
+                                .frame(width: 44, height: 44)
+                            Image(systemName: "flag.checkered.2.crossed")
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundStyle(LiveIslandTheme.f1Red)
                         }
+                        Text("NEXT RACE")
+                            .font(.custom("Orbitron-Bold", size: 9))
+                            .foregroundStyle(LiveIslandTheme.muted)
+                            .tracking(1.4)
                     }
+                    .frame(maxHeight: .infinity, alignment: .top)
+                    .padding(.leading, 14)
+                    .padding(.top, 2)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     TimelineView(PeriodicTimelineSchedule(from: Date(), by: 60)) { timeline in
-                        Text(LiveCountdown.dhm(from: timeline.date, to: context.attributes.raceStart))
-                            .font(.custom("Orbitron-Bold", size: 22))
-                            .foregroundStyle(.white)
-                            .monospacedDigit()
+                        VStack(alignment: .trailing, spacing: 6) {
+                            Text(raceDayFormatter.string(from: context.attributes.raceStart))
+                                .font(.custom("Orbitron-Bold", size: 10))
+                                .foregroundStyle(LiveIslandTheme.muted)
+                            Text(LiveCountdown.dhm(from: timeline.date, to: context.attributes.raceStart))
+                                .font(.custom("Orbitron-ExtraBold", size: 22))
+                                .foregroundStyle(.white)
+                                .monospacedDigit()
+                                .multilineTextAlignment(.trailing)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.75)
+                        }
+                        .frame(maxHeight: .infinity, alignment: .top)
+                        .padding(.trailing, 14)
+                        .padding(.top, 2)
                     }
                 }
+                DynamicIslandExpandedRegion(.bottom) {
+                    VStack(alignment: .leading, spacing: 5) {
+                        Rectangle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        LiveIslandTheme.f1Red.opacity(0.95),
+                                        LiveIslandTheme.f1Red.opacity(0.15),
+                                        Color.clear,
+                                    ],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .frame(height: 2)
+                            .padding(.bottom, 2)
+                        Text(context.attributes.raceName)
+                            .font(.custom("Orbitron-Bold", size: 15))
+                            .foregroundStyle(.white)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.85)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text(context.attributes.circuitName)
+                            .font(.custom("Orbitron-Regular", size: 12))
+                            .foregroundStyle(LiveIslandTheme.muted)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.88)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(.horizontal, 18)
+                    .padding(.top, 6)
+                    .padding(.bottom, 10)
+                }
             } compactLeading: {
-                Image(systemName: "flag.checkered")
-                    .foregroundStyle(Color(red: 1, green: 0.09, blue: 0.02))
+                ZStack {
+                    Circle()
+                        .fill(LiveIslandTheme.pillFill)
+                        .frame(width: 22, height: 22)
+                    Image(systemName: "flag.checkered")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(LiveIslandTheme.f1Red)
+                }
             } compactTrailing: {
                 TimelineView(PeriodicTimelineSchedule(from: Date(), by: 60)) { timeline in
-                    Text(LiveCountdown.dhm(from: timeline.date, to: context.attributes.raceStart))
-                        .font(.custom("Orbitron-Bold", size: 11))
+                    Text(LiveCountdown.dhmCompact(from: timeline.date, to: context.attributes.raceStart))
+                        .font(.custom("Orbitron-Bold", size: 12))
                         .foregroundStyle(.white)
                         .monospacedDigit()
                         .lineLimit(1)
-                        .minimumScaleFactor(0.5)
+                        .minimumScaleFactor(0.55)
                 }
             } minimal: {
                 Image(systemName: "flag.checkered.2.crossed")
-                    .foregroundStyle(Color(red: 1, green: 0.09, blue: 0.02))
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(LiveIslandTheme.f1Red)
             }
         }
     }
