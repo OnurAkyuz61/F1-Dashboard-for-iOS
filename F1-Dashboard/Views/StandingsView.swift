@@ -125,18 +125,19 @@ struct PremiumStandingRow: View {
                 .foregroundColor(rankColor)
                 .frame(width: 50, alignment: .leading)
             
-            // Driver Info
+            // Driver Info — single flowing line (given + family wrap together, not as two columns)
             VStack(alignment: .leading, spacing: 6) {
-                HStack(spacing: 4) {
-                    Text(standing.driver.givenName)
-                        .font(AppFont.orbitron(17, weight: .regular))
-                        .foregroundColor(.white.opacity(0.6))
-                    
-                    Text(standing.driver.familyName)
-                        .font(AppFont.orbitron(17, weight: .bold))
-                        .foregroundColor(.white)
-                }
-                
+                (Text("\(standing.driver.givenName) ")
+                    .font(AppFont.orbitron(17, weight: .regular))
+                    .foregroundColor(.white.opacity(0.6))
+                    + Text(standing.driver.familyName)
+                    .font(AppFont.orbitron(17, weight: .bold))
+                    .foregroundColor(.white))
+                    .lineLimit(3)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
                 // Team Name
                 if let constructor = standing.constructors.first {
                     Text(constructor.name)
@@ -144,9 +145,9 @@ struct PremiumStandingRow: View {
                         .foregroundColor(.white.opacity(0.5))
                 }
             }
-            
-            Spacer()
-            
+            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+            .layoutPriority(1)
+
             // Points - Accent Red
             Text(standing.points)
                 .font(AppFont.orbitron(22, weight: .bold))
