@@ -4,7 +4,7 @@ import SwiftUI
 import WidgetKit
 
 struct NextRaceLiveActivityWidget: Widget {
-    var body: some Widget {
+    var body: some WidgetConfiguration {
         ActivityConfiguration(for: NextRaceLiveAttributes.self) { context in
             VStack(alignment: .leading, spacing: 8) {
                 Text("NEXT RACE")

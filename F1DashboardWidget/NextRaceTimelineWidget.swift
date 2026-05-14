@@ -33,7 +33,7 @@ struct NextRaceTimelineProvider: TimelineProvider {
 }
 
 struct NextRaceTimelineWidget: Widget {
-    var body: some Widget {
+    var body: some WidgetConfiguration {
         StaticConfiguration(kind: "com.onurakyuz.F1-Dashboard.nextRace", provider: NextRaceTimelineProvider()) { entry in
             NextRaceWidgetEntryView(entry: entry)
                 .containerBackground(for: .widget) {
